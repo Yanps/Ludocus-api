@@ -1,0 +1,740 @@
+﻿*Elasticsearch queries*
+
+---------------------Usuário-------------------------------
+-- Exemplo de criação do índice de Usuários
+PUT users
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "organization_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      },
+      "surname": {
+        "type": "keyword",
+        "index": true
+      },
+      "email": {
+        "type": "keyword",
+        "index": true
+      },
+      "password_hash": {
+        "type": "keyword",
+        "index": true
+      },
+      "role": { 
+        "type": "keyword",
+        "index": true
+      },
+      "create_date": { 
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}
+
+GET /users/_search
+GET /users/_count
+DELETE /users/
+
+-- Exemplo de PUT
+PUT /users/_doc/5b48d49a8fd10a0901212430
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "name":"Brunelli Gabriel",
+  "surname": "Cupello",
+  "email": "brunelli.cupello@live.jp",
+  "password_hash":"Senha@123",
+  "role": "admin",
+  "create_date":"2020-09-28T10:49:31.470271+00:00"
+}
+
+PUT /users/_doc/fd8546c4312d11e985c4641c67730998
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "name":"Yan",
+  "surname": "Pessoa Correia",
+  "email": "yanps000@gmail.com",
+  "password_hash":"Pass#321",
+  "role": "admin",
+  "create_date":"2020-09-28T10:58:43.000000+00:00"
+}
+
+---------------------Organização-------------------------------
+-- Exemplo de criação da índice de Organizações
+PUT organizations
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "admin_user_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      },
+      "fancy_name": {
+        "type": "keyword",
+        "index": true
+      },
+      "slug": {
+        "type": "keyword",
+        "index": true
+      },
+      "create_date": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}
+
+GET /organizations/_search
+GET /organizations/_count
+DELETE /organizations/
+
+-- Exemplo de PUT
+PUT /organizations/_doc/fdefb6ee312d11e9a3ce641c67730998
+{
+  "admin_user_uid":"5b48d49a8fd10a0901212430",
+  "name":"Brunelli Confeitaria de Softwares",
+  "fancy_name": "BCS",
+  "slug": "confeitaria",
+  "create_date":"2020-09-28T10:49:31.470271+00:00"
+}
+
+---------------------Grupo-------------------------------
+-- Exemplo de criação da índice de grupos
+PUT groups
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "organization_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "owner_user_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      },
+      "user_uid_list": {
+        "type": "keyword",
+        "index": true
+      },
+      "create_date": { 
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}
+
+GET /groups/_search
+GET /groups/_count
+DELETE /groups/
+
+-- Exemplo de PUT
+PUT /groups/_doc/787dc20e354611e98af5641c67730998
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "name":"Desenvolvedores",
+  "user_uid_list": ["5b48d49a8fd10a0901212430", "fd8546c4312d11e985c4641c67730998"],
+  "create_date":"2020-09-28T10:49:31.470271+00:00"
+}
+
+---------------------Métrica-------------------------------
+-- Exemplo de criação da índice de métricas
+PUT metrics
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
+      "organization_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "owner_user_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "group_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      },
+      "data_type": {
+        "type": "keyword",
+        "index": true
+      },
+      "classification": { 
+        "type": "keyword",
+        "index": true
+      },
+      "model": { 
+        "type": "keyword",
+        "index": true
+      },
+      "create_date": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}
+
+GET /metrics/_search
+GET /metrics/_count
+DELETE /metrics/
+
+-- Exemplo de PUT
+PUT /metrics/_doc/99117dd0354611e9b766641c67730998
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "pont_rank_classe",
+  "name":"Pontuação do Ranking da Classe",
+  "data_type": "float",
+  "classification": "c",
+  "model": "l",
+  "create_date":"2020-09-28T11:07:30.000000+00:00"
+}
+
+PUT /metrics/_doc/95a79b70354611e99ec8641c67730998
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "nota_pfc",
+  "name":"Nota de PFC",
+  "data_type": "float",
+  "classification": "s",
+  "model": "l",
+  "create_date":"2020-09-28T11:08:30.000000+00:00"
+}
+
+PUT /metrics/_doc/00004d04312e11e98c43641c67730998
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "percentual_presença_aulas",
+  "name":"Percentual de presença nas aulas",
+  "data_type": "float",
+  "classification": "s",
+  "model": "l",
+  "create_date":"2020-09-28T11:09:30.000000+00:00"
+}
+
+PUT /metrics/_doc/ff96b2c2312d11e9b0a2641c67730998
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "avaliação_professores",
+  "name":"Avaliação do aluno pelos Professores",
+  "data_type": "float",
+  "classification": "s",
+  "model": "l",
+  "create_date":"2020-09-28T11:10:30.000000+00:00"
+}
+
+---------------------Tipo de Dado de Métrica-------------------------------
+-- Exemplo de criação da índice de tipos de dados de métricas
+PUT metric_data_type
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      }
+    }
+  }
+}
+
+GET /metric_data_type/_search
+GET /metric_data_type/_count
+DELETE /metric_data_type/
+
+-- Exemplo de PUT
+PUT /metric_data_type/_doc/float
+{
+  "code": "float",
+  "name":"Número",
+}
+
+PUT /metric_data_type/_doc/bool
+{
+  "code": "bool",
+  "name":"Verdadeiro ou Falso",
+}
+
+PUT /metric_data_type/_doc/char
+{
+  "code": "char",
+  "name":"Caractére",
+}
+
+---------------------Classificação de Métrica-------------------------------
+-- Exemplo de criação da índice de classificações de métricas
+PUT metric_classification
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      }
+    }
+  }
+}
+
+GET /metric_classification/_search
+GET /metric_classification/_count
+DELETE /metric_classification/
+
+-- Exemplo de PUT
+PUT /metric_classification/_doc/a
+{
+  "code": "s",
+  "name":"Simples",
+}
+
+PUT /metric_classification/_doc/l
+{
+  "code": "c",
+  "name":"Composta",
+}
+
+---------------------Modelo de Métrica-------------------------------
+-- Exemplo de criação da índice de modelos de métricas
+PUT metric_model
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      }
+    }
+  }
+}
+
+GET /metric_model/_search
+GET /metric_model/_count
+DELETE /metric_model/
+
+-- Exemplo de PUT
+PUT /metric_model/_doc/a
+{
+  "code": "a",
+  "name":"Absoluta",
+}
+
+PUT /metric_model/_doc/l
+{
+  "code": "l",
+  "name":"de Lançamento",
+}
+
+
+
+---------------------Regra-------------------------------
+-- Exemplo de criação da índice de regras
+PUT rules
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "organization_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "group_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "owner_user_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "metric_data_type_code": {
+        "type": "keyword",
+        "index": true
+      },
+      "operator_code": {
+        "type": "keyword",
+        "index": true
+      },
+      "rule_value": {
+        "type": "keyword",
+        "index": true
+      },
+      "create_date": { 
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}
+
+GET /rules/_search
+GET /rules/_count
+DELETE /rules/
+
+-- Exemplo de PUT
+PUT /rules/_doc/81ba942aaca411e9b143023fad48cc44
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "nota_max_prova",
+  "name":"Nota máxima em prova",
+  "metric_data_type_code": "float",
+  "operator_code": "==",
+  "rule_value": "10",
+  "create_date":"2020-09-28T11:41:30.000000+00:00"
+}
+
+PUT /rules/_doc/8b84dc48354611e98b19641c67730998
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "media_notas_alta",
+  "name":"Média de notas alta",
+  "metric_data_type_code": "float",
+  "operator_code": ">=",
+  "rule_value": "8.5",
+  "create_date":"2020-09-28T11:42:30.000000+00:00"
+}
+
+PUT /rules/_doc/b4043908354611e99ac4641c67730998
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "avaliação_aluno_professor",
+  "name":"Avaliação aluno-professor",
+  "metric_data_type_code": "float",
+  "operator_code": ">",
+  "rule_value": "9",
+  "create_date":"2020-09-28T11:43:00.000000+00:00"
+}
+
+---------------------Operador-------------------------------
+-- Exemplo de criação da índice de operadores
+PUT operators
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      }
+    }
+  }
+}
+
+GET /operators/_search
+GET /operators/_count
+DELETE /operators/
+
+-- Exemplo de PUT
+PUT /operators/_doc/==
+{
+  "code": "==",
+  "name":"="
+}
+
+PUT /operators/_doc/!=
+{
+  "code": "!=",
+  "name":"≠"
+}
+
+PUT /operators/_doc/>
+{
+  "code": ">",
+  "name":">"
+}
+
+PUT /operators/_doc/>=
+{
+  "code": ">=",
+  "name":"≥"
+}
+
+PUT /operators/_doc/<
+{
+  "code": "<",
+  "name":"<"
+}
+
+PUT /operators/_doc/<=
+{
+  "code": "<=",
+  "name":"≤"
+}
+
+
+---------------------Conquista-------------------------------
+-- Exemplo de criação da índice de conquistas
+PUT achievments
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
+      "organization_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "group_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "owner_user_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      },
+      "affected_metric_code": {
+        "type": "keyword",
+        "index": true
+      },
+      "affected_metric_value": {
+        "type": "float"
+      },
+      "create_date": { 
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}
+
+GET /achievments/_search
+GET /achievments/_count
+DELETE /achievments/
+
+-- Exemplo de PUT
+PUT /achievments/_doc/23ba942aaca411e9b143023fad48cc44
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "mais_10_rank_classe",
+  "name":"+ 10 Pontos no Ranking da Classe",
+  "affected_metric_code": "pont_rank_classe",
+  "affected_metric_value": 10,
+  "create_date":"2020-09-28T11:55:00.000000+00:00"
+}
+
+PUT /achievments/_doc/24ba942aaca411e9b143023fad48cc44
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "mais_5_rank_classe",
+  "name":"+ 5 Pontos no Ranking da Classe",
+  "affected_metric_code": "pont_rank_classe",
+  "affected_metric_value": 5,
+  "create_date":"2020-09-28T11:56:00.000000+00:00"
+}
+
+PUT /achievments/_doc/25ba942aaca411e9b143023fad48cc44
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "menos_5_rank_classe",
+  "name":"- 5 Pontos no Ranking da Classe",
+  "affected_metric_code": "pont_rank_classe",
+  "affected_metric_value": -5,
+  "create_date":"2020-09-28T11:57:00.000000+00:00"
+}
+
+---------------------Experiência-------------------------------
+-- Exemplo de criação da índice de experiências
+PUT experiences
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
+      "organization_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "group_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "owner_user_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      },
+      "description": {
+        "type": "text",
+        "index": false
+      },
+      "type": {
+        "type": "keyword",
+        "index": true
+      },
+      "reference_metric_code": {
+        "type": "keyword",
+        "index": true
+      },
+      "sets": {
+        "properties": {
+          "code": {
+            "type": "keyword",
+            "index": true
+          },
+          "metric_code": {
+            "type": "keyword",
+            "index": true
+          },
+          "rule_code": {
+            "type": "keyword",
+            "index": true
+          },
+          "achievment_code": {
+            "type": "keyword",
+            "index": true
+          }
+        }
+      },
+      "create_date": { 
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}
+
+GET /experiences/_search
+GET /experiences/_count
+DELETE /experiences/
+
+-- Exemplo de PUT
+PUT /experiences/_doc/33ba942aaca411e9b143023fad48cc33
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "rank_classe",
+  "name":"Ranking da classe",
+  "description": "Ranking de classe dos alunos do 5o ano de Engenharia da Computação de 2020",
+  "type": "rank",
+  "reference_metric_code": "pont_rank_classe",
+  "sets": [
+    {
+      "code": "rc_1",
+      "metric_code": "nota_pfc",
+      "rule_code": "nota_max_prova",
+      "achievment_code": "mais_10_rank_classe"
+    },
+    {
+      "code": "rc_2",
+      "metric_code": "avaliação_professores",
+      "rule_code": "avaliação_aluno_professor",
+      "achievment_code": "mais_5_rank_classe"
+    }
+  ],
+  "create_date":"2020-09-28T11:55:00.000000+00:00"
+}
+
+
+---------------------Tipo de Experiência-------------------------------
+-- Exemplo de criação da índice de tipos de experiências
+PUT experiences_types
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
+        "type": "keyword",
+        "index": true
+      }
+    }
+  }
+}
+
+GET /experiences_types/_search
+GET /experiences_types/_count
+DELETE /experiences_types/
+
+-- Exemplo de PUT
+PUT /experiences_types/_doc/44ba942aaca411e9b143023fad48cc44
+{
+  "code": "rank",
+  "name":"Ranking"
+}
+
+PUT /experiences_types/_doc/45ba942aaca411e9b143023fad48cc44
+{
+  "code": "level",
+  "name":"Nível"
+}
