@@ -1,14 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "4EuPz73/VJKLVkzTVaKzwgSpRxTE2oKfOnGzdXVTIY8DVY8UBE2rUgM/4d7i+Bh6Zdz12wnXGHryhZ/y31QEDA==",
+  "dgSpecHash": "ngExhJu5RATBa7xFvpQanI75r5dHYo1clj+a+qip+KeDmpFC35pF7ACJmrwngCAHmtDAqs3jCtPgpsDrHbUZnA==",
   "success": true,
   "projectFilePath": "C:\\Users\\brune\\Desktop\\Pasta Principal\\PFC\\LudocusApi\\LudocusApi.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\brune\\.nuget\\packages\\autowrapper.core\\4.3.1\\autowrapper.core.4.3.1.nupkg.sha512",
     "C:\\Users\\brune\\.nuget\\packages\\elasticsearch.net\\7.9.0\\elasticsearch.net.7.9.0.nupkg.sha512",
     "C:\\Users\\brune\\.nuget\\packages\\microsoft.csharp\\4.6.0\\microsoft.csharp.4.6.0.nupkg.sha512",
     "C:\\Users\\brune\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\brune\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
     "C:\\Users\\brune\\.nuget\\packages\\nest\\7.9.0\\nest.7.9.0.nupkg.sha512",
+    "C:\\Users\\brune\\.nuget\\packages\\newtonsoft.json\\12.0.2\\newtonsoft.json.12.0.2.nupkg.sha512",
     "C:\\Users\\brune\\.nuget\\packages\\system.buffers\\4.5.0\\system.buffers.4.5.0.nupkg.sha512",
     "C:\\Users\\brune\\.nuget\\packages\\system.configuration.configurationmanager\\4.7.0\\system.configuration.configurationmanager.4.7.0.nupkg.sha512",
     "C:\\Users\\brune\\.nuget\\packages\\system.diagnostics.diagnosticsource\\4.5.1\\system.diagnostics.diagnosticsource.4.5.1.nupkg.sha512",

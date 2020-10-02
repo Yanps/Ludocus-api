@@ -29,7 +29,7 @@ namespace LudocusApi.Services
             return _client;
         }
 
-        public ElasticsearchService(IConfiguration configuration)
+        public ElasticsearchService(IConfiguration configuration, string? defaultIndex)
         {
             this.configuration = configuration;
 
@@ -37,7 +37,13 @@ namespace LudocusApi.Services
 
             this.elasticsearchUri = new Uri(this.configuration.GetSection("ElasticsearchSettings").GetSection("uri").Value);
 
-            this.defaultIndex = this.configuration.GetSection("ElasticsearchSettings").GetSection("defaultIndex").Value;
+            if(defaultIndex != null)
+            {
+                this.defaultIndex = defaultIndex;
+            } else
+            {
+                this.defaultIndex = this.configuration.GetSection("ElasticsearchSettings").GetSection("defaultIndex").Value;
+            }
 
             this.username = this.configuration.GetSection("ElasticsearchSettings").GetSection("username").Value;
 

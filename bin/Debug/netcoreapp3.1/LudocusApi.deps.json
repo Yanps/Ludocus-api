@@ -24,6 +24,7 @@
     ".NETCoreApp,Version=v3.1": {
       "LudocusApi/1.0.0": {
         "dependencies": {
+          "AutoWrapper.Core": "4.3.1",
           "NEST": "7.9.0",
           "System.Configuration.ConfigurationManager": "4.7.0",
           "Microsoft.AspNetCore.Antiforgery": "3.1.0.0",
@@ -316,6 +317,20 @@
           "LudocusApi.dll": {}
         }
       },
+      "AutoWrapper.Core/4.3.1": {
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.2"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/AutoWrapper.dll": {
+            "assemblyVersion": "4.3.1.0",
+            "fileVersion": "4.3.1.0"
+          }
+        },
+        "compile": {
+          "lib/netcoreapp3.1/AutoWrapper.dll": {}
+        }
+      },
       "Elasticsearch.Net/7.9.0": {
         "dependencies": {
           "Microsoft.CSharp": "4.6.0",
@@ -351,6 +366,17 @@
         },
         "compile": {
           "lib/netstandard2.0/Nest.dll": {}
+        }
+      },
+      "Newtonsoft.Json/12.0.2": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.2.23222"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
       },
       "System.Buffers/4.5.0": {},
@@ -2110,6 +2136,13 @@
       "serviceable": false,
       "sha512": ""
     },
+    "AutoWrapper.Core/4.3.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Ghpwy2ba6O4+nHyH1PHb/shVLav+j7+oTDqC63THtr7ua4a88tMhSjxjfF3KQQsT4+t7SFDiG7tqF4+CSeN2PA==",
+      "path": "autowrapper.core/4.3.1",
+      "hashPath": "autowrapper.core.4.3.1.nupkg.sha512"
+    },
     "Elasticsearch.Net/7.9.0": {
       "type": "package",
       "serviceable": true,
@@ -2144,6 +2177,13 @@
       "sha512": "sha512-ssiLHCf9ozPJnUL3yVyiOLbNqSBM93tF6F7iqov3Iny3SL4rEEDjuptDzeafP4a0jUWVKn01dBsFy6PoYWfqqw==",
       "path": "nest/7.9.0",
       "hashPath": "nest.7.9.0.nupkg.sha512"
+    },
+    "Newtonsoft.Json/12.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-rTK0s2EKlfHsQsH6Yx2smvcTCeyoDNgCW7FEYyV01drPlh2T243PR2DiDXqtC5N4GDm4Ma/lkxfW5a/4793vbA==",
+      "path": "newtonsoft.json/12.0.2",
+      "hashPath": "newtonsoft.json.12.0.2.nupkg.sha512"
     },
     "System.Buffers/4.5.0": {
       "type": "package",

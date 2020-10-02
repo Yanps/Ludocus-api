@@ -38,6 +38,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "AutoWrapper.Core": {
+              "target": "Package",
+              "version": "[4.3.1, )"
+            },
             "NEST": {
               "target": "Package",
               "version": "[7.9.0, )"

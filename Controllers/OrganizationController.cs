@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using LudocusApi.Models;
 using LudocusApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Nest;
+using AutoWrapper.Wrappers;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,56 +19,135 @@ namespace LudocusApi.Controllers
     [ApiController]
     public class OrganizationController : ControllerBase
     {
-        IConfiguration configuration;
+        IConfiguration _configuration;
 
+        ElasticClient _client;
+
+        int _defaultSize;
+
+        // Gets all organizations
         // GET: api/<OrganizationController>
         [HttpGet]
-        public IReadOnlyCollection<Organization> Get()
+        public ApiResponse Get()
         {
-            List<Organization> organizationList = new List<Organization>();
-
-            // Connects to ES
-            ElasticClient client = new ElasticsearchService(this.configuration).Get();
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
 
             // Queries Organizations
-            ISearchResponse<Organization> searchResponse = client.Search<Organization>(s => s
+            ISearchResponse<Organization> searchResponse = _client.Search<Organization>(s => s
                 .From(0)
-                .Size(100)
+                .Size(this._defaultSize)
             );
 
-            IReadOnlyCollection<Organization> organization = searchResponse.Documents;
+            if(searchResponse.IsValid == true)
+            {
+                return new ApiResponse(searchResponse.Documents, 200);
+            }
 
-            return organization;
+            return new ApiResponse(null, 204);
         }
 
+        // Gets organization by uid
         // GET api/<OrganizationController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{organizationUid}")]
+        public ApiResponse Get(string organizationUid)
         {
-            return "value";
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Queries Organizations by uid
+            IGetResponse<Organization> getResponse = _client.Get<Organization>(organizationUid);
+
+            if(getResponse.IsValid == true)
+            {
+                // If has found organization, returns 200
+                return new ApiResponse(getResponse.Source, 200);
+            }
+
+            // Returns not found
+            return new ApiResponse(null, 204);
         }
 
+        // Creates new organization
         // POST api/<OrganizationController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ApiResponse Post([FromBody] Organization organization)
         {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Indexes Organization's document
+            IndexResponse indexResponse = _client.IndexDocument(organization);
+
+            if(indexResponse.IsValid == true)
+            {
+                // If has created organization, returns 201
+                return new ApiResponse(indexResponse.Id, 201);
+            }
+
+            // If hasn't created Organization, returns 500
+            return new ApiResponse("Internal server error when trying to create Organization", null, 500);
         }
 
         // PUT api/<OrganizationController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{organization_uid}")]
+        public ApiResponse Put(string organization_uid, [FromBody] Organization organization)
         {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Updates Organization's document
+            UpdateResponse<Organization> response = _client.Update<Organization, Organization>(
+                new DocumentPath<Organization>(organization_uid),
+                u => u
+                    .Index("organizations")
+                    .Doc(organization)
+            );
+
+            if (response.IsValid == true)
+            {
+                // If has updated organization, returns 200
+                return new ApiResponse("Updated successfully", null, 200);
+            }
+
+            // If hasn't updated Organization, returns 500
+            return new ApiResponse("Internal server error when trying to update Organization", null, 500);
         }
 
         // DELETE api/<OrganizationController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{organization_uid}")]
+        public ApiResponse Delete(string organization_uid)
         {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Deletes Organization's document
+            DeleteResponse response = _client.Delete<Organization>(organization_uid);
+
+            if (response.IsValid == true)
+            {
+                // If has updated organization, returns 200
+                return new ApiResponse("Deleted successfully", null, 200);
+            }
+
+            // If hasn't deleted Organization, returns 500
+            return new ApiResponse("Internal server error when trying to update Organization", null, 500);
         }
 
         public OrganizationController(IConfiguration configuration)
         {
-            this.configuration = configuration;
+            // Sets configuration
+            this._configuration = configuration;
+
+            // Connects to ES
+            this._client = new ElasticsearchService(this._configuration, "organizations").Get();
+
+            this._defaultSize = Int32.Parse(this._configuration.GetSection("ElasticsearchSettings").GetSection("defaultSize").Value);
         }
     }
 }

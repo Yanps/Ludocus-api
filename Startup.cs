@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using AutoWrapper;
+using LudocusApi.Models;
 
 namespace LudocusApi
 {
@@ -56,6 +58,8 @@ namespace LudocusApi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseApiResponseAndExceptionWrapper<MapResponseObject>();
 
             app.UseRouting();
 
