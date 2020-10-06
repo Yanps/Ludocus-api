@@ -31,6 +31,10 @@ PUT users
         "type": "keyword",
         "index": true
       },
+      "session": { 
+        "type": "keyword",
+        "index": true
+      },
       "create_date": { 
         "type": "date",
         "format": "strict_date_optional_time||epoch_millis"
@@ -52,6 +56,7 @@ PUT /users/_doc/5b48d49a8fd10a0901212430
   "email": "brunelli.cupello@live.jp",
   "password_hash":"Senha@123",
   "role": "admin",
+  "session": "ahudhu99acjnjqiubwgiubgiuooefiu",
   "create_date":"2020-09-28T10:49:31.470271+00:00"
 }
 
@@ -63,6 +68,7 @@ PUT /users/_doc/fd8546c4312d11e985c4641c67730998
   "email": "yanps000@gmail.com",
   "password_hash":"Pass#321",
   "role": "admin",
+  "session": "xcvoihxhiuoqbiuqiouvcouivqviu",
   "create_date":"2020-09-28T10:58:43.000000+00:00"
 }
 
@@ -387,11 +393,11 @@ PUT rules
         "type": "keyword",
         "index": true
       },
-      "group_uid": {
+      "owner_user_uid": {
         "type": "keyword",
         "index": true
       },
-      "owner_user_uid": {
+      "group_uid": {
         "type": "keyword",
         "index": true
       },
@@ -535,11 +541,11 @@ PUT achievments
         "type": "keyword",
         "index": true
       },
-      "group_uid": {
+      "owner_user_uid": {
         "type": "keyword",
         "index": true
       },
-      "owner_user_uid": {
+      "group_uid": {
         "type": "keyword",
         "index": true
       },
@@ -618,11 +624,11 @@ PUT experiences
         "type": "keyword",
         "index": true
       },
-      "group_uid": {
+      "owner_user_uid": {
         "type": "keyword",
         "index": true
       },
-      "owner_user_uid": {
+      "group_uid": {
         "type": "keyword",
         "index": true
       },
