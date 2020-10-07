@@ -19,13 +19,16 @@ namespace LudocusApi.Controllers
     [ApiController]
     public class OrganizationController : ControllerBase
     {
+        #region Properties
         IConfiguration _configuration;
 
         ElasticClient _client;
 
         int _defaultSize;
+        #endregion
 
-        // Gets all organizations
+        #region Get all Organizations
+        // Gets all Organizations
         // GET: api/<OrganizationController>
         [HttpGet]
         public ApiResponse Get()
@@ -47,8 +50,10 @@ namespace LudocusApi.Controllers
 
             return new ApiResponse(null, 204);
         }
+        #endregion
 
-        // Gets organization by uid
+        #region Get Organization by uid
+        // Gets Organization by uid
         // GET api/<OrganizationController>/5
         [HttpGet("{organizationUid}")]
         public ApiResponse Get(string organizationUid)
@@ -62,15 +67,17 @@ namespace LudocusApi.Controllers
 
             if(getResponse.IsValid == true)
             {
-                // If has found organization, returns 200
+                // If has found Organization, returns 200
                 return new ApiResponse(getResponse.Source, 200);
             }
 
             // Returns not found
             return new ApiResponse(null, 204);
         }
+        #endregion
 
-        // Creates new organization
+        #region Create new Organization
+        // Creates new Organization
         // POST api/<OrganizationController>
         [HttpPost]
         public ApiResponse Post([FromBody] Organization organization)
@@ -84,14 +91,17 @@ namespace LudocusApi.Controllers
 
             if(indexResponse.IsValid == true)
             {
-                // If has created organization, returns 201
+                // If has created Organization, returns 201
                 return new ApiResponse(indexResponse.Id, 201);
             }
 
             // If hasn't created Organization, returns 500
             return new ApiResponse("Internal server error when trying to create Organization", null, 500);
         }
+        #endregion
 
+        #region Edit Organization
+        // Edits Organization
         // PUT api/<OrganizationController>/5
         [HttpPut("{organization_uid}")]
         public ApiResponse Put(string organization_uid, [FromBody] Organization organization)
@@ -110,14 +120,16 @@ namespace LudocusApi.Controllers
 
             if (response.IsValid == true)
             {
-                // If has updated organization, returns 200
+                // If has updated Organization, returns 200
                 return new ApiResponse("Updated successfully", null, 200);
             }
 
             // If hasn't updated Organization, returns 500
             return new ApiResponse("Internal server error when trying to update Organization", null, 500);
         }
+        #endregion
 
+        #region Delete Organization
         // DELETE api/<OrganizationController>/5
         [HttpDelete("{organization_uid}")]
         public ApiResponse Delete(string organization_uid)
@@ -131,14 +143,16 @@ namespace LudocusApi.Controllers
 
             if (response.IsValid == true)
             {
-                // If has updated organization, returns 200
+                // If has deleted Organization, returns 200
                 return new ApiResponse("Deleted successfully", null, 200);
             }
 
             // If hasn't deleted Organization, returns 500
-            return new ApiResponse("Internal server error when trying to update Organization", null, 500);
+            return new ApiResponse("Internal server error when trying to delete Organization", null, 500);
         }
+        #endregion
 
+        #region Constructor
         public OrganizationController(IConfiguration configuration)
         {
             // Sets configuration
@@ -149,5 +163,6 @@ namespace LudocusApi.Controllers
 
             this._defaultSize = Int32.Parse(this._configuration.GetSection("ElasticsearchSettings").GetSection("defaultSize").Value);
         }
+        #endregion
     }
 }
