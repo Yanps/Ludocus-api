@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoWrapper.Wrappers;
+using LudocusApi.Models;
+using LudocusApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Nest;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -12,36 +17,146 @@ namespace LudocusApi.Controllers
     [ApiController]
     public class AchievmentController : ControllerBase
     {
+        #region Properties
+        IConfiguration _configuration;
+
+        ElasticClient _client;
+
+        int _defaultSize;
+        #endregion
+
+        #region Get all Achievments
         // GET: api/<AchievmentController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public ApiResponse Get()
         {
-            return new string[] { "value1", "value2" };
-        }
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
 
-        // GET api/<AchievmentController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+            // Queries Achievments
+            ISearchResponse<Achievment> searchResponse = _client.Search<Achievment>(s => s
+                .From(0)
+                .Size(this._defaultSize)
+            );
+
+            if (searchResponse.IsValid == true)
+            {
+                return new ApiResponse(searchResponse.Documents, 200);
+            }
+
+            return new ApiResponse(null, 204);
+        }
+        #endregion
+
+        #region Get Achievment by uid
+        // GET api/<AchievmentController>/23ba942aaca411e9b143023fad48cc44
+        [HttpGet("{achievment_uid}")]
+        public ApiResponse Get(string achievment_uid)
         {
-            return "value";
-        }
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
 
+            // Queries Achievments by uid
+            IGetResponse<Achievment> getResponse = _client.Get<Achievment>(achievment_uid);
+
+            if (getResponse.IsValid == true)
+            {
+                // If has found Achievment, returns 200
+                return new ApiResponse(getResponse.Source, 200);
+            }
+
+            // Returns not found
+            return new ApiResponse(null, 204);
+        }
+        #endregion
+
+        #region Create new Achievment
         // POST api/<AchievmentController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ApiResponse Post([FromBody] Achievment achievment)
         {
-        }
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
 
-        // PUT api/<AchievmentController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+            // Indexes Achievment's document
+            IndexResponse indexResponse = _client.IndexDocument(achievment);
 
-        // DELETE api/<AchievmentController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            if (indexResponse.IsValid == true)
+            {
+                // If has created Achievment, returns 201
+                return new ApiResponse(indexResponse.Id, 201);
+            }
+
+            // If hasn't created Achievment, returns 500
+            return new ApiResponse("Internal server error when trying to create Achievment", null, 500);
         }
+        #endregion
+
+        #region Edit Achievment
+        // PUT api/<AchievmentController>/23ba942aaca411e9b143023fad48cc44
+        [HttpPut("{achievment_uid}")]
+        public ApiResponse Put(string achievment_uid, [FromBody] Achievment achievment)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Updates Achievment's document
+            UpdateResponse<Achievment> response = _client.Update<Achievment, Achievment>(
+                new DocumentPath<Achievment>(achievment_uid),
+                u => u
+                    .Index("achievments")
+                    .Doc(achievment)
+            );
+
+            if (response.IsValid == true)
+            {
+                // If has updated Achievment, returns 200
+                return new ApiResponse("Updated successfully", null, 200);
+            }
+
+            // If hasn't updated Achievment, returns 500
+            return new ApiResponse("Internal server error when trying to update Achievment", null, 500);
+        }
+        #endregion
+
+        #region Delete Achievment
+        // DELETE api/<AchievmentController>/23ba942aaca411e9b143023fad48cc44
+        [HttpDelete("{achievment_uid}")]
+        public ApiResponse Delete(string achievment_uid)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Deletes Achievment's document
+            DeleteResponse response = _client.Delete<Achievment>(achievment_uid);
+
+            if (response.IsValid == true)
+            {
+                // If has deleted Achievment, returns 200
+                return new ApiResponse("Deleted successfully", null, 200);
+            }
+
+            // If hasn't deleted Achievment, returns 500
+            return new ApiResponse("Internal server error when trying to delete Achievment", null, 500);
+        }
+        #endregion
+
+        #region Constructor
+        public AchievmentController(IConfiguration configuration)
+        {
+            // Sets configuration
+            this._configuration = configuration;
+
+            // Connects to ES
+            this._client = new ElasticsearchService(this._configuration, "achievments").Get();
+
+            this._defaultSize = Int32.Parse(this._configuration.GetSection("ElasticsearchSettings").GetSection("defaultSize").Value);
+        }
+        #endregion
     }
 }
