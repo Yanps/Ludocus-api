@@ -55,15 +55,15 @@ namespace LudocusApi.Controllers
         #region Get Organization by uid
         // Gets Organization by uid
         // GET api/<OrganizationController>/5
-        [HttpGet("{organizationUid}")]
-        public ApiResponse Get(string organizationUid)
+        [HttpGet("{organization_uid}")]
+        public ApiResponse Get(string organization_uid)
         {
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
 
             // Queries Organizations by uid
-            IGetResponse<Organization> getResponse = _client.Get<Organization>(organizationUid);
+            IGetResponse<Organization> getResponse = _client.Get<Organization>(organization_uid);
 
             if(getResponse.IsValid == true)
             {
