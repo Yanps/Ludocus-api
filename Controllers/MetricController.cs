@@ -53,9 +53,9 @@ namespace LudocusApi.Controllers
 
         #region Get Metric by code
         // Gets Metric by code
-        // GET api/<MetricController>/matematica_2020.2
-        [HttpGet("{code}")]
-        public ApiResponse Get(string code)
+        // GET api/<MetricController>/code/matematica_2020.2
+        [HttpGet("/code/{code}")]
+        public ApiResponse GetByCode(string code)
         {
             // Verifies if user has authorization
             // TODO
@@ -77,6 +77,30 @@ namespace LudocusApi.Controllers
             {
                 // If has found Metric, returns 200
                 return new ApiResponse(searchResponse.Documents.FirstOrDefault(), 200);
+            }
+
+            // Returns not found
+            return new ApiResponse(null, 204);
+        }
+        #endregion
+
+        #region Get Metric by uid
+        // Gets Metric by uid
+        // GET api/<MetricController>/99117dd0354611e9b766641c67730998
+        [HttpGet("{metric_uid}")]
+        public ApiResponse GetByUid(string metric_uid)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Queries Metrics by uid
+            IGetResponse<Metric> getResponse = _client.Get<Metric>(metric_uid);
+
+            if (getResponse.IsValid == true)
+            {
+                // If has found Metric, returns 200
+                return new ApiResponse(getResponse.Source, 200);
             }
 
             // Returns not found
