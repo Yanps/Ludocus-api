@@ -21,6 +21,8 @@ namespace LudocusApi.Models
 
         public string session { get; set; }
 
+        public UserMetric metrics { get; set; }
+
         public DateTime create_date { get; set; }
     }
 }

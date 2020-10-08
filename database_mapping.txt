@@ -35,6 +35,27 @@ PUT users
         "type": "keyword",
         "index": true
       },
+      "metrics": {
+        "type": "nested",
+        "properties": {
+          "name": {
+            "type": "keyword",
+            "index": true
+          },
+          "float_value": {
+            "type": "float",
+            "index": true
+          },
+          "bool_value": {
+            "type": "boolean",
+            "index": true
+          },
+          "string_value": {
+            "type": "keyword",
+            "index": true
+          }
+        }
+      },
       "create_date": { 
         "type": "date",
         "format": "strict_date_optional_time||epoch_millis"
@@ -43,7 +64,7 @@ PUT users
   }
 }
 
-GET /users/_search
+GET /users/_mapping
 GET /users/_count
 DELETE /users/
 
@@ -57,6 +78,16 @@ PUT /users/_doc/5b48d49a8fd10a0901212430
   "password_hash":"Senha@123",
   "role": "admin",
   "session": "ahudhu99acjnjqiubwgiubgiuooefiu",
+  "metrics": [
+    {
+      "name": "matematica_2020.1",
+      "float_value": [7, 8, 10, 5.5]
+    },
+    {
+      "name": "fisica_2020.1",
+      "float_value": [8, 9, 10, 9.5]
+    }
+  ],
   "create_date":"2020-09-28T10:49:31.470271+00:00"
 }
 
@@ -69,6 +100,24 @@ PUT /users/_doc/fd8546c4312d11e985c4641c67730998
   "password_hash":"Pass#321",
   "role": "admin",
   "session": "xcvoihxhiuoqbiuqiouvcouivqviu",
+  "metrics": [
+    {
+      "name": "computação_2020.1",
+      "float_value": [7, 8, 10, 5.5]
+    },
+    {
+      "name": "fisica_2020.1",
+      "float_value": [8, 9, 10, 9.5]
+    },
+    {
+      "name": "aprovado_fisica_2020.1",
+      "bool_value": true
+    },
+    {
+      "name": "nível_rank_classe",
+      "string_value": "Recruta"
+    }
+  ],
   "create_date":"2020-09-28T10:58:43.000000+00:00"
 }
 
