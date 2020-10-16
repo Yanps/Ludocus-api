@@ -179,8 +179,8 @@ namespace LudocusApi.Controllers
         #region Edit Metric by code
         // Edits Metric by code
         // PUT api/<MetricController>/matematica_2020.2
-        [HttpPut("{code}")]
-        public ApiResponse Put(string code, [FromBody] Metric metric)
+        [HttpPut("code/{code}")]
+        public ApiResponse PutByCode(string code, [FromBody] Metric metric)
         {
             // Verifies if user has authorization
             // TODO
@@ -232,7 +232,7 @@ namespace LudocusApi.Controllers
             // Gets Metric's uid
             string metric_uid = GetMetricUidByCode(code, organization_uid, owner_user_uid);
 
-            // Deletes Organization's document
+            // Deletes Metrics's document
             DeleteResponse response = _client.Delete<Metric>(metric_uid);
 
             if (response.IsValid == true)

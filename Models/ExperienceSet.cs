@@ -15,10 +15,10 @@ namespace LudocusApi.Models
 
         public string code { get; set; }
 
-        public string metric_code { get; set; }
+        public string metric_uid { get; set; }
 
-        public string rule_code { get; set; }
+        public string rule_uid { get; set; }
 
-        public string achievment_code { get; set; }
+        public string achievment_uid { get; set; }
     }
 }

@@ -73,7 +73,7 @@ namespace LudocusApi.Controllers
             if (getResponse.IsValid == true)
             {
                 // If has found Experience, returns 200
-                // Maps uid to the Organization
+                // Maps uid to the Experience
                 getResponse.Source.uid = experience_uid;
                 return new ApiResponse(getResponse.Source, 200);
             }
@@ -99,7 +99,7 @@ namespace LudocusApi.Controllers
 
             if (experienceResponse.StatusCode == 200)
             {
-                // Maps uid to the Organization
+                // Maps uid to the Experience
                 Experience experience = (Experience)experienceResponse.Result;
                 experience.uid = experience_uid;
 
