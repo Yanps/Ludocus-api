@@ -27,3 +27,4 @@ C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\bin\Debug\netcoreapp3.1\Ne
 C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\obj\Debug\netcoreapp3.1\LudocusApi.csproj.CoreCompileInputs.cache
 C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\obj\Debug\netcoreapp3.1\LudocusApi.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\obj\Debug\netcoreapp3.1\LudocusApi.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\bin\Debug\netcoreapp3.1\aws-beanstalk-tools-defaults.json

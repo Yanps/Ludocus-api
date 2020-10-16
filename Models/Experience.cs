@@ -21,9 +21,7 @@ namespace LudocusApi.Models
 
         public string type { get; set; }
 
-        public string reference_metric_code { get; set; }
-
-        public ExperienceSet sets { get; set; }
+        public string reference_metric_uid { get; set; }
 
         public DateTime create_date { get; set; }
     }

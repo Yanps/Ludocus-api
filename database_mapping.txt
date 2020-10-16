@@ -35,27 +35,6 @@ PUT users
         "type": "keyword",
         "index": true
       },
-      "metrics": {
-        "type": "nested",
-        "properties": {
-          "name": {
-            "type": "keyword",
-            "index": true
-          },
-          "float_value": {
-            "type": "float",
-            "index": true
-          },
-          "bool_value": {
-            "type": "boolean",
-            "index": true
-          },
-          "string_value": {
-            "type": "keyword",
-            "index": true
-          }
-        }
-      },
       "create_date": { 
         "type": "date",
         "format": "strict_date_optional_time||epoch_millis"
@@ -78,16 +57,6 @@ PUT /users/_doc/5b48d49a8fd10a0901212430
   "password_hash":"Senha@123",
   "role": "admin",
   "session": "ahudhu99acjnjqiubwgiubgiuooefiu",
-  "metrics": [
-    {
-      "name": "matematica_2020.1",
-      "float_value": [7, 8, 10, 5.5]
-    },
-    {
-      "name": "fisica_2020.1",
-      "float_value": [8, 9, 10, 9.5]
-    }
-  ],
   "create_date":"2020-09-28T10:49:31.470271+00:00"
 }
 
@@ -100,24 +69,6 @@ PUT /users/_doc/fd8546c4312d11e985c4641c67730998
   "password_hash":"Pass#321",
   "role": "admin",
   "session": "xcvoihxhiuoqbiuqiouvcouivqviu",
-  "metrics": [
-    {
-      "name": "computação_2020.1",
-      "float_value": [7, 8, 10, 5.5]
-    },
-    {
-      "name": "fisica_2020.1",
-      "float_value": [8, 9, 10, 9.5]
-    },
-    {
-      "name": "aprovado_fisica_2020.1",
-      "bool_value": true
-    },
-    {
-      "name": "nível_rank_classe",
-      "string_value": "Recruta"
-    }
-  ],
   "create_date":"2020-09-28T10:58:43.000000+00:00"
 }
 
@@ -206,9 +157,9 @@ PUT /groups/_doc/787dc20e354611e98af5641c67730998
 {
   "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
   "owner_user_uid": "5b48d49a8fd10a0901212430",
-  "name":"Desenvolvedores",
+  "name": "Desenvolvedores",
   "user_uid_list": ["5b48d49a8fd10a0901212430", "fd8546c4312d11e985c4641c67730998"],
-  "create_date":"2020-09-28T10:49:31.470271+00:00"
+  "create_date": "2020-09-28T10:49:31.470271+00:00"
 }
 
 ---------------------Métrica-------------------------------
@@ -315,6 +266,73 @@ PUT /metrics/_doc/ff96b2c2312d11e9b0a2641c67730998
   "create_date":"2020-09-28T11:10:30.000000+00:00"
 }
 
+PUT /metrics/_doc/x7H8L3UBqdy07-LfM67d
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "matematica_2020.1",
+  "name":"Nota de Matemática em 2020 1o Semestre",
+  "data_type": "float",
+  "classification": "s",
+  "model": "l",
+  "create_date":"2020-10-16T02:56:00.000000+00:00"
+}
+
+
+PUT /metrics/_doc/yLEBMHUBqdy07-LfOK7R
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "fisica_2020.1",
+  "name":"Nota de Física em 2020 1o Semestre",
+  "data_type": "float",
+  "classification": "s",
+  "model": "l",
+  "create_date":"2020-10-16T03:02:00.000000+00:00"
+}
+
+PUT /metrics/_doc/0bEKMHUBqdy07-Lfc66L
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "fd8546c4312d11e985c4641c67730998",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "computação_2020.1",
+  "name":"Nota de Computação em 2020 1o Semestre",
+  "data_type": "float",
+  "classification": "s",
+  "model": "l",
+  "create_date":"2020-10-16T03:13:00.000000+00:00"
+}
+
+PUT /metrics/_doc/0rELMHUBqdy07-LfuK7P
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "fd8546c4312d11e985c4641c67730998",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "aprovado_fisica_2020.1",
+  "name":"Aprovação em Física em 2020 1o Semestre",
+  "data_type": "bool",
+  "classification": "c",
+  "model": "a",
+  "create_date":"2020-10-16T03:14:00.000000+00:00"
+}
+
+PUT /metrics/_doc/07ENMHUBqdy07-LfqK4F
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "fd8546c4312d11e985c4641c67730998",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "nível_rank_classe",
+  "name":"Nível do Rank de Classe",
+  "data_type": "string",
+  "classification": "c",
+  "model": "a",
+  "create_date":"2020-10-16T03:16:00.000000+00:00"
+}
+
+
 ---------------------Tipo de Dado de Métrica-------------------------------
 -- Exemplo de criação da índice de tipos de dados de métricas
 PUT metric_data_type
@@ -342,19 +360,19 @@ DELETE /metric_data_type/
 PUT /metric_data_type/_doc/float
 {
   "code": "float",
-  "name":"Número",
+  "name": "Número"
 }
 
 PUT /metric_data_type/_doc/bool
 {
   "code": "bool",
-  "name":"Verdadeiro ou Falso",
+  "name": "Verdadeiro ou Falso"
 }
 
-PUT /metric_data_type/_doc/char
+PUT /metric_data_type/_doc/string
 {
-  "code": "char",
-  "name":"Caractére",
+  "code": "string",
+  "name": "Texto"
 }
 
 ---------------------Classificação de Métrica-------------------------------
@@ -429,7 +447,85 @@ PUT /metric_model/_doc/l
   "name":"de Lançamento",
 }
 
+---------------------Valores das Métrica-------------------------------
+-- Exemplo de criação da índice de valores de métricas
+PUT metrics_values
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "metric_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "user_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "values": {
+        "type": "keyword",
+        "index": true
+      },
+      "update_date": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}
 
+GET /metrics_values/_search
+GET /metrics_values/_count
+DELETE /metrics_values/
+
+-- Exemplo de PUT
+PUT /metrics_values/_doc/z7ECMHUBqdy07-LfX64d
+{
+  "metric_uid": "x7H8L3UBqdy07-LfM67d",
+  "user_uid": "5b48d49a8fd10a0901212430",
+  "values": "[7, 8, 10, 5.5]",
+  "update_date":"2020-10-16T02:59:01.000000+00:00"
+}
+
+PUT /metrics_values/_doc/0LECMHUBqdy07-Lfta4Z
+{
+  "metric_uid": "yLEBMHUBqdy07-LfOK7R",
+  "user_uid": "5b48d49a8fd10a0901212430",
+  "values": "[8, 9, 10, 9.5]",
+  "update_date":"2020-10-16T03:01:00.000000+00:00"
+}
+
+PUT /metrics_values/_doc/3rEUMHUBqdy07-Lf9q7R
+{
+  "metric_uid": "0bEKMHUBqdy07-Lfc66L",
+  "user_uid": "fd8546c4312d11e985c4641c67730998",
+  "values": "[7, 8, 10, 5.5]",
+  "update_date": "2020-10-16T03:22:00.000000+00:00"
+}
+
+PUT /metrics_values/_doc/37EVMHUBqdy07-LfOa6J
+{
+  "metric_uid": "yLEBMHUBqdy07-LfOK7R",
+  "user_uid": "fd8546c4312d11e985c4641c67730998",
+  "values": "[8, 9, 10, 9.5]",
+  "update_date": "2020-10-16T03:23:00.000000+00:00"
+}
+
+PUT /metrics_values/_doc/4LEVMHUBqdy07-Lfda6U
+{
+  "metric_uid": "0rELMHUBqdy07-LfuK7P",
+  "user_uid": "fd8546c4312d11e985c4641c67730998",
+  "values": "true",
+  "update_date": "2020-10-16T03:24:00.000000+00:00"
+}
+
+PUT /metrics_values/_doc/4bEVMHUBqdy07-Lfmq6x
+{
+  "metric_uid": "07ENMHUBqdy07-LfqK4F",
+  "user_uid": "fd8546c4312d11e985c4641c67730998",
+  "values": "Recruta",
+  "update_date": "2020-10-16T03:24:30.000000+00:00"
+}
 
 ---------------------Regra-------------------------------
 -- Exemplo de criação da índice de regras
@@ -447,6 +543,14 @@ PUT rules
         "index": true
       },
       "group_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
+      "name": {
         "type": "keyword",
         "index": true
       },
@@ -602,12 +706,12 @@ PUT achievments
         "type": "keyword",
         "index": true
       },
-      "affected_metric_code": {
+      "affected_metric_uid": {
         "type": "keyword",
         "index": true
       },
       "affected_metric_value": {
-        "type": "float"
+        "type": "keyword"
       },
       "create_date": { 
         "type": "date",
@@ -629,8 +733,8 @@ PUT /achievments/_doc/23ba942aaca411e9b143023fad48cc44
   "group_uid": "787dc20e354611e98af5641c67730998",
   "code": "mais_10_rank_classe",
   "name":"+ 10 Pontos no Ranking da Classe",
-  "affected_metric_code": "pont_rank_classe",
-  "affected_metric_value": 10,
+  "affected_metric_uid": "99117dd0354611e9b766641c67730998",
+  "affected_metric_value": "10",
   "create_date":"2020-09-28T11:55:00.000000+00:00"
 }
 
@@ -641,8 +745,8 @@ PUT /achievments/_doc/24ba942aaca411e9b143023fad48cc44
   "group_uid": "787dc20e354611e98af5641c67730998",
   "code": "mais_5_rank_classe",
   "name":"+ 5 Pontos no Ranking da Classe",
-  "affected_metric_code": "pont_rank_classe",
-  "affected_metric_value": 5,
+  "affected_metric_uid": "99117dd0354611e9b766641c67730998",
+  "affected_metric_value": "5",
   "create_date":"2020-09-28T11:56:00.000000+00:00"
 }
 
@@ -653,8 +757,8 @@ PUT /achievments/_doc/25ba942aaca411e9b143023fad48cc44
   "group_uid": "787dc20e354611e98af5641c67730998",
   "code": "menos_5_rank_classe",
   "name":"- 5 Pontos no Ranking da Classe",
-  "affected_metric_code": "pont_rank_classe",
-  "affected_metric_value": -5,
+  "affected_metric_uid": "99117dd0354611e9b766641c67730998",
+  "affected_metric_value": "-5",
   "create_date":"2020-09-28T11:57:00.000000+00:00"
 }
 
@@ -693,29 +797,9 @@ PUT experiences
         "type": "keyword",
         "index": true
       },
-      "reference_metric_code": {
+      "reference_metric_uid": {
         "type": "keyword",
         "index": true
-      },
-      "sets": {
-        "properties": {
-          "code": {
-            "type": "keyword",
-            "index": true
-          },
-          "metric_code": {
-            "type": "keyword",
-            "index": true
-          },
-          "rule_code": {
-            "type": "keyword",
-            "index": true
-          },
-          "achievment_code": {
-            "type": "keyword",
-            "index": true
-          }
-        }
       },
       "create_date": { 
         "type": "date",
@@ -739,21 +823,7 @@ PUT /experiences/_doc/33ba942aaca411e9b143023fad48cc33
   "name":"Ranking da classe",
   "description": "Ranking de classe dos alunos do 5o ano de Engenharia da Computação de 2020",
   "type": "rank",
-  "reference_metric_code": "pont_rank_classe",
-  "sets": [
-    {
-      "code": "rc_1",
-      "metric_code": "nota_pfc",
-      "rule_code": "nota_max_prova",
-      "achievment_code": "mais_10_rank_classe"
-    },
-    {
-      "code": "rc_2",
-      "metric_code": "avaliação_professores",
-      "rule_code": "avaliação_aluno_professor",
-      "achievment_code": "mais_5_rank_classe"
-    }
-  ],
+  "reference_metric_uid": "99117dd0354611e9b766641c67730998",
   "create_date":"2020-09-28T11:55:00.000000+00:00"
 }
 
@@ -792,4 +862,64 @@ PUT /experiences_types/_doc/45ba942aaca411e9b143023fad48cc44
 {
   "code": "level",
   "name":"Nível"
+}
+
+
+---------------------Conjuntos de Experiência-------------------------------
+-- Exemplo de criação da índice de conjuntos de experiências
+PUT experiences_sets
+{
+  "mappings": {
+  	"dynamic": "strict",
+    "properties": {
+      "experience_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
+      "metric_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "rule_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "achievment_uid": {
+        "type": "keyword",
+        "index": true
+      },
+      "update_date": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      }
+    }
+  }
+}
+
+GET /experiences_sets/_search
+GET /experiences_sets/_count
+DELETE /experiences_sets/
+
+PUT /experiences_sets/_doc/ELEyMHUBqdy07-Lfx69I
+{
+  "experience_uid": "33ba942aaca411e9b143023fad48cc33",
+  "code": "rc_1",
+  "metric_uid": "95a79b70354611e99ec8641c67730998",
+  "rule_uid": "81ba942aaca411e9b143023fad48cc44",
+  "achievment_uid": "23ba942aaca411e9b143023fad48cc44",
+  "update_date":"2020-10-16T03:53:00.000000+00:00"
+}
+
+PUT /experiences_sets/_doc/EbEzMHUBqdy07-LfEa8Z
+{
+  "experience_uid": "33ba942aaca411e9b143023fad48cc33",
+  "code": "rc_2",
+  "metric_uid": "ff96b2c2312d11e9b0a2641c67730998",
+  "rule_uid": "b4043908354611e99ac4641c67730998",
+  "achievment_uid": "24ba942aaca411e9b143023fad48cc44",
+  "update_date":"2020-10-16T03:54:00.000000+00:00"
 }

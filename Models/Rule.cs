@@ -13,6 +13,10 @@ namespace LudocusApi.Models
 
         public string group_uid { get; set; }
 
+        public string code { get; set; }
+
+        public string name { get; set; }
+
         public string metric_data_type_code { get; set; }
 
         public string operator_code { get; set; }

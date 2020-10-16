@@ -7,6 +7,8 @@ namespace LudocusApi.Models
 {
     public class ExperienceSet
     {
+        public string experience_uid { get; set; }
+
         public string code { get; set; }
 
         public string metric_code { get; set; }

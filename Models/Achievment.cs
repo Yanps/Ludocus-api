@@ -17,9 +17,9 @@ namespace LudocusApi.Models
 
         public string name { get; set; }
 
-        public string affected_metric_code { get; set; }
+        public string affected_metric_uid { get; set; }
 
-        public float affected_metric_value { get; set; }
+        public string affected_metric_value { get; set; }
 
         public DateTime create_date { get; set; }
     }
