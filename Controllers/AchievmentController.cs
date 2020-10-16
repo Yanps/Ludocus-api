@@ -42,7 +42,13 @@ namespace LudocusApi.Controllers
 
             if (searchResponse.IsValid == true)
             {
-                return new ApiResponse(searchResponse.Documents, 200);
+                // If has found Achievments, returns 200
+                // Maps uid to the Achievments
+                return new ApiResponse(searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }), 200);
             }
 
             return new ApiResponse(null, 204);
@@ -64,6 +70,8 @@ namespace LudocusApi.Controllers
             if (getResponse.IsValid == true)
             {
                 // If has found Achievment, returns 200
+                // Maps uid to the Achievment
+                getResponse.Source.uid = achievment_uid;
                 return new ApiResponse(getResponse.Source, 200);
             }
 
@@ -108,7 +116,6 @@ namespace LudocusApi.Controllers
             UpdateResponse<Achievment> response = _client.Update<Achievment, Achievment>(
                 new DocumentPath<Achievment>(achievment_uid),
                 u => u
-                    .Index("achievments")
                     .Doc(achievment)
             );
 

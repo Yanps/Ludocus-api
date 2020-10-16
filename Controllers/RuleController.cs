@@ -43,7 +43,13 @@ namespace LudocusApi.Controllers
 
             if (searchResponse.IsValid == true)
             {
-                return new ApiResponse(searchResponse.Documents, 200);
+                // If has found Rules, returns 200
+                // Maps uid to the Rules
+                return new ApiResponse(searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }), 200);
             }
 
             return new ApiResponse(null, 204);
@@ -65,6 +71,8 @@ namespace LudocusApi.Controllers
             if (getResponse.IsValid == true)
             {
                 // If has found Rule, returns 200
+                // Maps uid to the Rule
+                getResponse.Source.uid = rule_uid;
                 return new ApiResponse(getResponse.Source, 200);
             }
 
@@ -109,7 +117,6 @@ namespace LudocusApi.Controllers
             UpdateResponse<Rule> response = _client.Update<Rule, Rule>(
                 new DocumentPath<Rule>(rule_uid),
                 u => u
-                    .Index("rules")
                     .Doc(rule)
             );
 
@@ -134,7 +141,7 @@ namespace LudocusApi.Controllers
             // return new ApiResponse(null, 401);
 
             // Deletes Rule's document
-            DeleteResponse response = _client.Delete<Organization>(rule_uid);
+            DeleteResponse response = _client.Delete<Rule>(rule_uid);
 
             if (response.IsValid == true)
             {

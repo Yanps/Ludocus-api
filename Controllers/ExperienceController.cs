@@ -42,7 +42,13 @@ namespace LudocusApi.Controllers
 
             if (searchResponse.IsValid == true)
             {
-                return new ApiResponse(searchResponse.Documents, 200);
+                // If has found Experiences, returns 200
+                // Maps uid to the Experiences
+                return new ApiResponse(searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }), 200);
             }
 
             return new ApiResponse(null, 204);
@@ -64,6 +70,8 @@ namespace LudocusApi.Controllers
             if (getResponse.IsValid == true)
             {
                 // If has found Experience, returns 200
+                // Maps uid to the Organization
+                getResponse.Source.uid = experience_uid;
                 return new ApiResponse(getResponse.Source, 200);
             }
 
@@ -108,7 +116,6 @@ namespace LudocusApi.Controllers
             UpdateResponse<Experience> response = _client.Update<Experience, Experience>(
                 new DocumentPath<Experience>(experience_uid),
                 u => u
-                    .Index("experiences")
                     .Doc(experience)
             );
 

@@ -45,9 +45,16 @@ namespace LudocusApi.Controllers
 
             if(searchResponse.IsValid == true)
             {
-                return new ApiResponse(searchResponse.Documents, 200);
+                // If has found Organizations, returns 200
+                // Maps uid to the Organizations
+                return new ApiResponse(searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }), 200);
             }
 
+            // If hasn't found Organizations, returns 204
             return new ApiResponse(null, 204);
         }
         #endregion
@@ -68,6 +75,8 @@ namespace LudocusApi.Controllers
             if(getResponse.IsValid == true)
             {
                 // If has found Organization, returns 200
+                // Maps uid to the Organization
+                getResponse.Source.uid = organization_uid;
                 return new ApiResponse(getResponse.Source, 200);
             }
 
@@ -114,7 +123,6 @@ namespace LudocusApi.Controllers
             UpdateResponse<Organization> response = _client.Update<Organization, Organization>(
                 new DocumentPath<Organization>(organization_uid),
                 u => u
-                    .Index("organizations")
                     .Doc(organization)
             );
 

@@ -42,7 +42,13 @@ namespace LudocusApi.Controllers
 
             if (searchResponse.IsValid == true)
             {
-                return new ApiResponse(searchResponse.Documents, 200);
+                // If has found Groups, returns 200
+                // Maps uid to the Groups
+                return new ApiResponse(searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }), 200);
             }
 
             return new ApiResponse(null, 204);
@@ -64,6 +70,8 @@ namespace LudocusApi.Controllers
             if (getResponse.IsValid == true)
             {
                 // If has found Group, returns 200
+                // Maps uid to the Group
+                getResponse.Source.uid = group_uid;
                 return new ApiResponse(getResponse.Source, 200);
             }
 
@@ -108,7 +116,6 @@ namespace LudocusApi.Controllers
             UpdateResponse<Group> response = _client.Update<Group, Group>(
                 new DocumentPath<Group>(group_uid),
                 u => u
-                    .Index("groups")
                     .Doc(group)
             );
 

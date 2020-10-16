@@ -43,7 +43,13 @@ namespace LudocusApi.Controllers
 
             if (searchResponse.IsValid == true)
             {
-                return new ApiResponse(searchResponse.Documents, 200);
+                // If has found Metrics, returns 200
+                // Maps uid to the Metrics
+                return new ApiResponse(searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }), 200);
             }
 
             // Returns not found
@@ -76,7 +82,12 @@ namespace LudocusApi.Controllers
             if (searchResponse.IsValid == true)
             {
                 // If has found Metric, returns 200
-                return new ApiResponse(searchResponse.Documents.FirstOrDefault(), 200);
+                // Maps uid to the Metric
+                return new ApiResponse(searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }).FirstOrDefault(), 200);
             }
 
             // Returns not found
@@ -100,6 +111,8 @@ namespace LudocusApi.Controllers
             if (getResponse.IsValid == true)
             {
                 // If has found Metric, returns 200
+                // Maps uid to the Metric
+                getResponse.Source.uid = metric_uid;
                 return new ApiResponse(getResponse.Source, 200);
             }
 
@@ -159,7 +172,6 @@ namespace LudocusApi.Controllers
             UpdateResponse<Metric> updateResponse = _client.Update<Metric, Metric>(
                 new DocumentPath<Metric>(metric_uid),
                 u => u
-                    .Index("metrics")
                     .Doc(metric)
             );
 
