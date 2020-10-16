@@ -153,7 +153,7 @@ namespace LudocusApi.Controllers
             this._configuration = configuration;
 
             // Connects to ES
-            this._client = new ElasticsearchService(this._configuration, "organizations").Get();
+            this._client = new ElasticsearchService(this._configuration, "users").Get();
 
             this._defaultSize = Int32.Parse(this._configuration.GetSection("ElasticsearchSettings").GetSection("defaultSize").Value);
         }

@@ -29,7 +29,7 @@ namespace LudocusApi.Services
             return _client;
         }
 
-        public ElasticsearchService(IConfiguration configuration, string? defaultIndex)
+        public ElasticsearchService(IConfiguration configuration, string defaultIndex = null)
         {
             this.configuration = configuration;
 
@@ -52,7 +52,7 @@ namespace LudocusApi.Services
             //var x = ConfigurationManager.AppSettings;
 
             var settings = new ConnectionSettings(this.elasticsearchUri)
-                .DefaultIndex("organizations")
+                .DefaultIndex(this.defaultIndex)
                 .BasicAuthentication(this.username, this.password);
 
             _client = new ElasticClient(settings);
