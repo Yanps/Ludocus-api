@@ -48,7 +48,7 @@ namespace LudocusApi.Controllers
                 {
                     h.Source.uid = h.Id;
                     return h.Source;
-                }), 200);
+                }).ToList(), 200);
             }
 
             // If hasn't found Users, returns 204

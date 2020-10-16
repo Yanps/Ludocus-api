@@ -48,7 +48,7 @@ namespace LudocusApi.Controllers
                 {
                     h.Source.uid = h.Id;
                     return h.Source;
-                }), 200);
+                }).ToList(), 200);
             }
 
             return new ApiResponse(null, 204);

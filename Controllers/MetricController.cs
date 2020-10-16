@@ -49,7 +49,7 @@ namespace LudocusApi.Controllers
                 {
                     h.Source.uid = h.Id;
                     return h.Source;
-                }), 200);
+                }).ToList(), 200);
             }
 
             // Returns not found
@@ -146,6 +146,33 @@ namespace LudocusApi.Controllers
 
             // If hasn't created Metric, returns 500
             return new ApiResponse("Internal server error when trying to create Metric", null, 500);
+        }
+        #endregion
+
+        #region Edit Metric
+        // PUT api/<MetricController>/99117dd0354611e9b766641c67730998
+        [HttpPut("{metric_uid}")]
+        public ApiResponse Put(string metric_uid, [FromBody] Metric metric)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Updates Metric's document
+            UpdateResponse<Metric> response = _client.Update<Metric, Metric>(
+                new DocumentPath<Metric>(metric_uid),
+                u => u
+                    .Doc(metric)
+            );
+
+            if (response.IsValid == true)
+            {
+                // If has updated Metric, returns 200
+                return new ApiResponse("Updated successfully", null, 200);
+            }
+
+            // If hasn't updated Metric, returns 500
+            return new ApiResponse("Internal server error when trying to update Metric", null, 500);
         }
         #endregion
 
