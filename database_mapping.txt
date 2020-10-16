@@ -483,7 +483,7 @@ PUT /metrics_values/_doc/z7ECMHUBqdy07-LfX64d
 {
   "metric_uid": "x7H8L3UBqdy07-LfM67d",
   "user_uid": "5b48d49a8fd10a0901212430",
-  "values": "[7, 8, 10, 5.5]",
+  "values": ["7", "8", "10", "5.5"],
   "update_date":"2020-10-16T02:59:01.000000+00:00"
 }
 
@@ -491,7 +491,7 @@ PUT /metrics_values/_doc/0LECMHUBqdy07-Lfta4Z
 {
   "metric_uid": "yLEBMHUBqdy07-LfOK7R",
   "user_uid": "5b48d49a8fd10a0901212430",
-  "values": "[8, 9, 10, 9.5]",
+  "values": ["8", "9", "10", "9.5"],
   "update_date":"2020-10-16T03:01:00.000000+00:00"
 }
 
@@ -499,7 +499,7 @@ PUT /metrics_values/_doc/3rEUMHUBqdy07-Lf9q7R
 {
   "metric_uid": "0bEKMHUBqdy07-Lfc66L",
   "user_uid": "fd8546c4312d11e985c4641c67730998",
-  "values": "[7, 8, 10, 5.5]",
+  "values": ["7", "8", "10", "5.5"],
   "update_date": "2020-10-16T03:22:00.000000+00:00"
 }
 
@@ -507,7 +507,7 @@ PUT /metrics_values/_doc/37EVMHUBqdy07-LfOa6J
 {
   "metric_uid": "yLEBMHUBqdy07-LfOK7R",
   "user_uid": "fd8546c4312d11e985c4641c67730998",
-  "values": "[8, 9, 10, 9.5]",
+  "values": ["8", "9", "10", "9.5"],
   "update_date": "2020-10-16T03:23:00.000000+00:00"
 }
 
@@ -515,7 +515,7 @@ PUT /metrics_values/_doc/4LEVMHUBqdy07-Lfda6U
 {
   "metric_uid": "0rELMHUBqdy07-LfuK7P",
   "user_uid": "fd8546c4312d11e985c4641c67730998",
-  "values": "true",
+  "values": ["true"],
   "update_date": "2020-10-16T03:24:00.000000+00:00"
 }
 
@@ -523,7 +523,7 @@ PUT /metrics_values/_doc/4bEVMHUBqdy07-Lfmq6x
 {
   "metric_uid": "07ENMHUBqdy07-LfqK4F",
   "user_uid": "fd8546c4312d11e985c4641c67730998",
-  "values": "Recruta",
+  "values": ["Recruta"],
   "update_date": "2020-10-16T03:24:30.000000+00:00"
 }
 
