@@ -527,6 +527,22 @@ PUT /metrics_values/_doc/4bEVMHUBqdy07-Lfmq6x
   "update_date": "2020-10-16T03:24:30.000000+00:00"
 }
 
+PUT /metrics_values/_doc/rbGcMXUBqdy07-Lfpq-E
+{
+  "metric_uid": "99117dd0354611e9b766641c67730998",
+  "user_uid": "5b48d49a8fd10a0901212430",
+  "values": ["50"],
+  "update_date":"2020-10-16T10:32:01.000000+00:00"
+}
+
+PUT /metrics_values/_doc/rrGcMXUBqdy07-Lf1681
+{
+  "metric_uid": "99117dd0354611e9b766641c67730998",
+  "user_uid": "fd8546c4312d11e985c4641c67730998",
+  "values": ["72"],
+  "update_date": "2020-10-16T10:32:30.000000+00:00"
+}
+
 ---------------------Regra-------------------------------
 -- Exemplo de criação da índice de regras
 PUT rules

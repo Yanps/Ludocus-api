@@ -59,7 +59,7 @@ namespace LudocusApi.Controllers
         #region Get User by uid
         // GET api/<UserController>/fd8546c4312d11e985c4641c67730998
         [HttpGet("{user_uid}")]
-        public ApiResponse Get(string user_uid)
+        public ApiResponse GetByUid(string user_uid)
         {
             // Verifies if user has authorization
             // TODO
@@ -73,7 +73,7 @@ namespace LudocusApi.Controllers
                 // If has found User, returns 200
                 // Maps uid to the User
                 getResponse.Source.uid = user_uid;
-                return new ApiResponse(getResponse.Source, 200);
+                return new ApiResponse((User)getResponse.Source, 200);
             }
 
             // Returns not found

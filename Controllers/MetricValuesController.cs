@@ -59,7 +59,7 @@ namespace LudocusApi.Controllers
         #region Get Metric Values by uid
         // GET api/<MetricValuesController>/5
         [HttpGet("{metric_values_uid}")]
-        public ApiResponse Get(string metric_values_uid)
+        public ApiResponse GetByUid(string metric_values_uid)
         {
             // Verifies if user has authorization
             // TODO
@@ -74,6 +74,43 @@ namespace LudocusApi.Controllers
                 // Maps uid to the Metric Values
                 getResponse.Source.uid = metric_values_uid;
                 return new ApiResponse(getResponse.Source, 200);
+            }
+
+            // Returns not found
+            return new ApiResponse(null, 204);
+        }
+        #endregion
+
+        #region Get Metrics Values by Metric uid
+        // GET api/<MetricValuesController>/metric/5
+        [HttpGet("metric/{metric_uid}")]
+        public ApiResponse GetByMetricUid(string metric_uid)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Queries Metrics Values by Metric uid
+            ISearchResponse<MetricValues> searchResponse = _client.Search<MetricValues>(s => s
+                .From(0)
+                .Size(this._defaultSize)
+                .Query(q => q
+                    .Match(m => m
+                        .Field(f => f.metric_uid)
+                        .Query(metric_uid)
+                    )
+                )
+            );
+
+            if (searchResponse.IsValid == true)
+            {
+                // If has found Metric Values, returns 200
+                // Maps uid to the Metric
+                return new ApiResponse(searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }).ToList(), 200);
             }
 
             // Returns not found
