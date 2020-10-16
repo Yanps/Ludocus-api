@@ -81,6 +81,53 @@ namespace LudocusApi.Controllers
         }
         #endregion
 
+        #region Get Users by Group uid
+        // GET api/<UserController>/group/787dc20e354611e98af5641c67730998
+        [HttpGet("group/{group_uid}")]
+        public ApiResponse GetByGroupUid(string group_uid)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Get Group by uid
+            GroupController groupController = new GroupController(this._configuration);
+            ApiResponse groupResponse = groupController.GetByUid(group_uid);
+            
+            if(groupResponse.StatusCode == 200)
+            {
+                // Gets the user uid list from the Group
+                List<string> user_uid_list = ((Group)groupResponse.Result).user_uid_list;
+
+                // Instantiates the User list
+                List<User> user_list = new List<User>();
+
+                foreach (string user_uid in user_uid_list)
+                {
+                    // Queries Users by uid
+                    IGetResponse<User> getResponse = _client.Get<User>(user_uid);
+
+                    if (getResponse.IsValid == true)
+                    {
+                        // Maps uid to the User
+                        getResponse.Source.uid = user_uid;
+                        // If has found User, adds to the User list
+                        user_list.Add(getResponse.Source);
+                    } else
+                    {
+                        // If hasn't found a User, returns 500
+                        return new ApiResponse("Internal server error when trying to get Users", null, 500);
+                    }
+                }
+
+                // If has found all Users
+                return new ApiResponse(user_list, 200);
+            } 
+            // If there's an error with the Group request, returns Status Code
+            return new ApiResponse("Error when trying to get Group", groupResponse.StatusCode);
+        }
+        #endregion
+
         #region Create new User
         // POST api/<UserController>
         [HttpPost]

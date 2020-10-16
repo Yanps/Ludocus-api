@@ -58,7 +58,7 @@ namespace LudocusApi.Controllers
         #region Get Group by uid
         // GET api/<GroupController>/787dc20e354611e98af5641c67730998
         [HttpGet("{group_uid}")]
-        public ApiResponse Get(string group_uid)
+        public ApiResponse GetByUid(string group_uid)
         {
             // Verifies if user has authorization
             // TODO
