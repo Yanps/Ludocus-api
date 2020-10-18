@@ -13,6 +13,8 @@ namespace LudocusApi.Models
 
         public string organization_uid { get; set; }
 
+        public string code { get; set; }
+
         public string name { get; set; }
 
         public string surname { get; set; }

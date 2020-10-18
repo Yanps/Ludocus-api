@@ -11,6 +11,10 @@ PUT users
         "type": "keyword",
         "index": true
       },
+      "code": {
+        "type": "keyword",
+        "index": true
+      },
       "name": {
         "type": "keyword",
         "index": true
@@ -51,6 +55,7 @@ DELETE /users/
 PUT /users/_doc/5b48d49a8fd10a0901212430
 {
   "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "code":"14405",
   "name":"Brunelli Gabriel",
   "surname": "Cupello",
   "email": "brunelli.cupello@live.jp",
@@ -63,6 +68,7 @@ PUT /users/_doc/5b48d49a8fd10a0901212430
 PUT /users/_doc/fd8546c4312d11e985c4641c67730998
 {
   "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "code":"2016",
   "name":"Yan",
   "surname": "Pessoa Correia",
   "email": "yanps000@gmail.com",
