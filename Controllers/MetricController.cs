@@ -113,7 +113,7 @@ namespace LudocusApi.Controllers
                 // If has found Metric, returns 200
                 // Maps uid to the Metric
                 getResponse.Source.uid = metric_uid;
-                return new ApiResponse((Metric)getResponse.Source, 200);
+                return new ApiResponse(getResponse.Source, 200);
             }
 
             // Returns not found

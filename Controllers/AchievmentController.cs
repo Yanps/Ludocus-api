@@ -81,7 +81,6 @@ namespace LudocusApi.Controllers
                 if(metricResponse.StatusCode == 200)
                 {
                     return new ApiResponse(new AchievmentResponse(getResponse.Source, ((Metric)metricResponse.Result).code), 200);
-
                 }
                 return new ApiResponse("Internal server error when trying to get Metric code", 500);
 
