@@ -24,7 +24,7 @@ C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\bin\Debug\netcoreapp3.1\Sy
 C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\bin\Debug\netcoreapp3.1\AutoWrapper.dll
 C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\bin\Debug\netcoreapp3.1\aws-beanstalk-tools-defaults.json
 C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\obj\Debug\netcoreapp3.1\LudocusApi.csproj.CoreCompileInputs.cache
 C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\obj\Debug\netcoreapp3.1\LudocusApi.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\obj\Debug\netcoreapp3.1\LudocusApi.MvcApplicationPartsAssemblyInfo.cache
-C:\Users\brune\Desktop\Pasta Principal\PFC\LudocusApi\bin\Debug\netcoreapp3.1\aws-beanstalk-tools-defaults.json
