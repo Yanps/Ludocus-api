@@ -72,11 +72,23 @@ namespace LudocusApi.Controllers
                 // If has found Achievment, returns 200
                 // Maps uid to the Achievment
                 getResponse.Source.uid = achievment_uid;
-                return new ApiResponse(getResponse.Source, 200);
+
+                // Queries Metric to get it's code
+                MetricController metricController = new MetricController(this._configuration);
+                ApiResponse metricResponse = metricController.GetByUid(getResponse.Source.affected_metric_uid);
+
+                // If status code is 200, maps affected_metric_code and returns AchievmentResponse with code 200
+                if(metricResponse.StatusCode == 200)
+                {
+                    return new ApiResponse(new AchievmentResponse(getResponse.Source, ((Metric)metricResponse.Result).code), 200);
+
+                }
+                return new ApiResponse("Internal server error when trying to get Metric code", 500);
+
             }
 
             // Returns not found
-            return new ApiResponse(null, 204);
+            return new ApiResponse("Failed to find Achievment", 204);
         }
         #endregion
 

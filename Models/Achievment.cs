@@ -27,4 +27,24 @@ namespace LudocusApi.Models
 
         public DateTime create_date { get; set; }
     }
+
+    public class AchievmentResponse: Achievment
+    {
+        public string affected_metric_code { get; set; }
+
+        public AchievmentResponse(Achievment achievment, string affected_metric_code)
+        {
+            this.uid = achievment.uid;
+            this.code = achievment.code;
+            this.organization_uid = achievment.organization_uid;
+            this.owner_user_uid = achievment.owner_user_uid;
+            this.group_uid = achievment.group_uid;
+            this.name = achievment.name;
+            this.affected_metric_uid = achievment.affected_metric_uid;
+            this.affected_metric_value = achievment.affected_metric_value;
+            this.create_date = achievment.create_date;
+
+            this.affected_metric_code = affected_metric_code;
+        }
+    }
 }
