@@ -320,9 +320,35 @@ PUT /metrics/_doc/0rELMHUBqdy07-LfuK7P
   "code": "aprovado_fisica_2020.1",
   "name":"Aprovação em Física em 2020 1o Semestre",
   "data_type": "bool",
-  "classification": "c",
+  "classification": "s",
   "model": "a",
   "create_date":"2020-10-16T03:14:00.000000+00:00"
+}
+
+PUT /metrics/_doc/jKwAP3UBoU9gXwWeRHs8
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "fd8546c4312d11e985c4641c67730998",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "presença_fisica_2020.1",
+  "name":"Presença em Física em 2020 1o Semestre",
+  "data_type": "bool",
+  "classification": "s",
+  "model": "l",
+  "create_date":"2020-10-19T00:55:00.000000+00:00"
+}
+
+PUT /metrics/_doc/4qwQP3UBoU9gXwWe4HyL
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "fd8546c4312d11e985c4641c67730998",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "avaliação_guedes_2020.1",
+  "name":"Avaliação do Professor Guedes em 2020 1o Semestre",
+  "data_type": "float",
+  "classification": "s",
+  "model": "a",
+  "create_date":"2020-10-19T01:12:00.000000+00:00"
 }
 
 PUT /metrics/_doc/07ENMHUBqdy07-LfqK4F
@@ -541,12 +567,29 @@ PUT /metrics_values/_doc/rbGcMXUBqdy07-Lfpq-E
   "update_date":"2020-10-16T10:32:01.000000+00:00"
 }
 
+PUT /metrics_values/_doc/zqwCP3UBoU9gXwWeuHuu
+{
+  "metric_uid": "jKwAP3UBoU9gXwWeRHs8",
+  "user_uid": "fd8546c4312d11e985c4641c67730998",
+  "values": ["true", "true", "true", "false", "false", "true", "true"],
+  "update_date":"2020-10-19T00:58:00.000000+00:00"
+}
+
+
 PUT /metrics_values/_doc/rrGcMXUBqdy07-Lf1681
 {
   "metric_uid": "99117dd0354611e9b766641c67730998",
   "user_uid": "fd8546c4312d11e985c4641c67730998",
   "values": ["72"],
   "update_date": "2020-10-16T10:32:30.000000+00:00"
+}
+
+PUT /metrics_values/_doc/46wSP3UBoU9gXwWe1nzG
+{
+  "metric_uid":"4qwQP3UBoU9gXwWe4HyL",
+  "user_uid": "fd8546c4312d11e985c4641c67730998",
+  "values": ["9.7"],
+  "update_date":"2020-10-19T01:16:00.000000+00:00"
 }
 
 ---------------------Regra-------------------------------
