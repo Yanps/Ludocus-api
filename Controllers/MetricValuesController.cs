@@ -57,7 +57,7 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Get Metric Values by uid
-        // GET api/<MetricValuesController>/5
+        // GET api/<MetricValuesController>/rrGcMXUBqdy07-Lf1681
         [HttpGet("{metric_values_uid}")]
         public ApiResponse GetByUid(string metric_values_uid)
         {
@@ -82,7 +82,7 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Get Metrics Values by Metric uid
-        // GET api/<MetricValuesController>/metric/5
+        // GET api/<MetricValuesController>/metric/99117dd0354611e9b766641c67730998
         [HttpGet("metric/{metric_uid}")]
         public ApiResponse GetByMetricUid(string metric_uid)
         {
@@ -104,13 +104,40 @@ namespace LudocusApi.Controllers
 
             if (searchResponse.IsValid == true)
             {
-                // If has found Metric Values, returns 200
-                // Maps uid to the Metric
-                return new ApiResponse(searchResponse.Hits.Select(h =>
+                // If has found Metric Values, maps uid to the MetricValue
+                List<MetricValues> metricValuesList = searchResponse.Hits.Select(h =>
                 {
                     h.Source.uid = h.Id;
                     return h.Source;
-                }).ToList(), 200);
+                }).ToList();
+
+                // Instantiates the User Controller
+                UserController userController = new UserController(this._configuration);
+
+                // Instantiates the Metric Values Response list
+                List<MetricValuesResponse> metricValuesResponseList = new List<MetricValuesResponse>();
+
+                foreach (MetricValues metricValues in metricValuesList)
+                {
+                    // Gets User data
+                    ApiResponse userResponse = userController.GetByUid(metricValues.user_uid);
+                    if (userResponse.StatusCode == 200)
+                    {
+                        // If has found User, maps to the MetricValuesResponse
+                        User user = (User)userResponse.Result;
+
+                        MetricValuesResponse metricValuesResponse = new MetricValuesResponse(metricValues, user.code, user.name + " " + user.surname);
+
+                        metricValuesResponseList.Add(metricValuesResponse);
+                    } else
+                    {
+                        // If hasn't found User data, returns 500
+                        return new ApiResponse("Internal server error when trying to get User data", null, 500);
+                    }
+                }
+
+                // If has found all MetricsValues data, returns 200
+                return new ApiResponse(metricValuesResponseList, 200);
             }
 
             // Returns not found
