@@ -171,7 +171,7 @@ namespace LudocusApi.Controllers
         #region Create new Metrics Values by Bulk
         // POST api/<MetricValuesController>
         [HttpPost]
-        public ApiResponse PostBulk([FromBody] List<MetricValues> metricValuesList)
+        public ApiResponse PostBulk([FromBody] List<MetricValues> metric_values_list)
         {
             // Verifies if user has authorization
             // TODO
@@ -181,7 +181,7 @@ namespace LudocusApi.Controllers
             List<string> metricValuesUidList = new List<string>();
 
             // Indexes Metrics Values' documents
-            foreach(MetricValues metricValues in metricValuesList)
+            foreach(MetricValues metricValues in metric_values_list)
             {
                 IndexResponse indexResponse = _client.IndexDocument(metricValues);
 
@@ -200,7 +200,7 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Edit Metric Values
-        // PUT api/<MetricValuesController>/5
+        // PUT api/<MetricValuesController>/rrGcMXUBqdy07-Lf1681
         [HttpPut("{metricValues_uid}")]
         public ApiResponse Put(string metricValues_uid, [FromBody] MetricValues metricValues)
         {
@@ -228,20 +228,23 @@ namespace LudocusApi.Controllers
 
         #region Edit Metrics Values by Bulk
         // PUT api/<MetricValuesController>
-        [HttpPost]
-        public ApiResponse PutBulk([FromBody] List<MetricValues> metricValuesList)
+        [HttpPut]
+        public ApiResponse PutBulk([FromBody] List<MetricValues> metric_values_list)
         {
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
 
             // Indexes Metrics Values' documents
-            foreach (MetricValues metricValues in metricValuesList)
+            foreach (MetricValues metricValues in metric_values_list)
             {
                 // Gets metric values's uid and sets it to null on the object
                 string metricValues_uid = metricValues.uid;
 
                 metricValues.uid = null;
+
+                // Updates update_date value's 
+                metricValues.update_date = DateTime.UtcNow;
 
                 // Updates Metric Values' document
                 UpdateResponse<MetricValues> updateResponse = _client.Update<MetricValues, MetricValues>(
