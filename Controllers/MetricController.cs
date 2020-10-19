@@ -215,9 +215,9 @@ namespace LudocusApi.Controllers
 
         #region Delete Metric by code
         // Deletes Metric by code
-        // DELETE api/<MetricController>/matematica_2020.2
-        [HttpDelete("{code}")]
-        public ApiResponse Delete(string code)
+        // DELETE api/<MetricController>/code/matematica_2020.2
+        [HttpDelete("code/{code}")]
+        public ApiResponse DeleteByCode(string code)
         {
             // Verifies if user has authorization
             // TODO
@@ -233,6 +233,30 @@ namespace LudocusApi.Controllers
             string metric_uid = GetMetricUidByCode(code, organization_uid, owner_user_uid);
 
             // Deletes Metrics's document
+            DeleteResponse response = _client.Delete<Metric>(metric_uid);
+
+            if (response.IsValid == true)
+            {
+                // If has deleted Metric, returns 200
+                return new ApiResponse("Deleted successfully", null, 200);
+            }
+
+            // If hasn't deleted Metric, returns 500
+            return new ApiResponse("Internal server error when trying to delete Metric", null, 500);
+        }
+        #endregion
+
+        #region Delete Metric by code
+        // Deletes Metric by code
+        // DELETE api/<MetricController>/VaywPnUBoU9gXwWefHpk
+        [HttpDelete("{metric_uid}")]
+        public ApiResponse DeleteByUid(string metric_uid)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Deletes Metric's document
             DeleteResponse response = _client.Delete<Metric>(metric_uid);
 
             if (response.IsValid == true)
