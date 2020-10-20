@@ -15,16 +15,8 @@ namespace LudocusApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ExperienceController : ControllerBase
+    public class ExperienceController : TemplateController
     {
-        #region Properties
-        IConfiguration _configuration;
-
-        ElasticClient _client;
-
-        int _defaultSize;
-        #endregion
-
         #region Get all Experiences
         // GET: api/<ExperienceController>
         [HttpGet]
@@ -235,15 +227,8 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Constructor
-        public ExperienceController(IConfiguration configuration)
+        public ExperienceController(IConfiguration configuration) : base(configuration, "experiences")
         {
-            // Sets configuration
-            this._configuration = configuration;
-
-            // Connects to ES
-            this._client = new ElasticsearchService(this._configuration, "experiences").Get();
-
-            this._defaultSize = Int32.Parse(this._configuration.GetSection("ElasticsearchSettings").GetSection("defaultSize").Value);
         }
         #endregion
     }

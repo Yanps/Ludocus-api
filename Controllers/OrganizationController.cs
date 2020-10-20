@@ -17,16 +17,8 @@ namespace LudocusApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrganizationController : ControllerBase
+    public class OrganizationController : TemplateController
     {
-        #region Properties
-        IConfiguration _configuration;
-
-        ElasticClient _client;
-
-        int _defaultSize;
-        #endregion
-
         #region Get all Organizations
         // Gets all Organizations
         // GET: api/<OrganizationController>
@@ -161,15 +153,8 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Constructor
-        public OrganizationController(IConfiguration configuration)
+        public OrganizationController(IConfiguration configuration) : base(configuration, "organizations")
         {
-            // Sets configuration
-            this._configuration = configuration;
-
-            // Connects to ES
-            this._client = new ElasticsearchService(this._configuration, "organizations").Get();
-
-            this._defaultSize = Int32.Parse(this._configuration.GetSection("ElasticsearchSettings").GetSection("defaultSize").Value);
         }
         #endregion
     }

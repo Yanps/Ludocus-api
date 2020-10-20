@@ -15,16 +15,8 @@ namespace LudocusApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GroupController : ControllerBase
+    public class GroupController : TemplateController
     {
-        #region Properties
-        IConfiguration _configuration;
-
-        ElasticClient _client;
-
-        int _defaultSize;
-        #endregion
-
         #region Get all Groups
         // GET: api/<GroupController>
         [HttpGet]
@@ -154,15 +146,8 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Constructor
-        public GroupController(IConfiguration configuration)
+        public GroupController(IConfiguration configuration) : base(configuration, "groups")
         {
-            // Sets configuration
-            this._configuration = configuration;
-
-            // Connects to ES
-            this._client = new ElasticsearchService(this._configuration, "groups").Get();
-
-            this._defaultSize = Int32.Parse(this._configuration.GetSection("ElasticsearchSettings").GetSection("defaultSize").Value);
         }
         #endregion
     }

@@ -15,16 +15,8 @@ namespace LudocusApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RuleController : ControllerBase
+    public class RuleController : TemplateController
     {
-        #region Properties
-        IConfiguration _configuration;
-
-        ElasticClient _client;
-
-        int _defaultSize;
-        #endregion
-
         #region Get all Rules
         // Gets all Rules
         // GET: api/<RuleController>
@@ -155,15 +147,8 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Constructor
-        public RuleController(IConfiguration configuration)
+        public RuleController(IConfiguration configuration) : base(configuration, "rules")
         {
-            // Sets configuration
-            this._configuration = configuration;
-
-            // Connects to ES
-            this._client = new ElasticsearchService(this._configuration, "rules").Get();
-
-            this._defaultSize = Int32.Parse(this._configuration.GetSection("ElasticsearchSettings").GetSection("defaultSize").Value);
         }
         #endregion
     }

@@ -15,15 +15,8 @@ namespace LudocusApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AchievmentController : ControllerBase
+    public class AchievmentController : TemplateController
     {
-        #region Properties
-        IConfiguration _configuration;
-
-        ElasticClient _client;
-
-        int _defaultSize;
-        #endregion
 
         #region Get all Achievments
         // GET: api/<AchievmentController>
@@ -165,15 +158,8 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Constructor
-        public AchievmentController(IConfiguration configuration)
+        public AchievmentController(IConfiguration configuration) : base(configuration, "achievments")
         {
-            // Sets configuration
-            this._configuration = configuration;
-
-            // Connects to ES
-            this._client = new ElasticsearchService(this._configuration, "achievments").Get();
-
-            this._defaultSize = Int32.Parse(this._configuration.GetSection("ElasticsearchSettings").GetSection("defaultSize").Value);
         }
         #endregion
     }

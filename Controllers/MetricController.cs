@@ -15,16 +15,8 @@ namespace LudocusApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MetricController : ControllerBase
+    public class MetricController : TemplateController
     {
-        #region Properties
-        IConfiguration _configuration;
-
-        ElasticClient _client;
-
-        int _defaultSize;
-        #endregion
-
         #region Get all Metrics
         // Gets all metrics
         // GET: api/<MetricController>
@@ -298,15 +290,8 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Constructor
-        public MetricController(IConfiguration configuration)
+        public MetricController(IConfiguration configuration) : base(configuration, "metrics")
         {
-            // Sets configuration
-            this._configuration = configuration;
-
-            // Connects to ES
-            this._client = new ElasticsearchService(this._configuration, "metrics").Get();
-
-            this._defaultSize = Int32.Parse(this._configuration.GetSection("ElasticsearchSettings").GetSection("defaultSize").Value);
         }
         #endregion
     }
