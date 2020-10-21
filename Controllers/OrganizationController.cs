@@ -35,19 +35,25 @@ namespace LudocusApi.Controllers
                 .Size(this._defaultSize)
             );
 
-            if(searchResponse.IsValid == true)
+            if (searchResponse.IsValid == true)
             {
-                // If has found Organizations, returns 200
-                // Maps uid to the Organizations
-                return new ApiResponse(searchResponse.Hits.Select(h =>
+                if (searchResponse.Hits.Count > 0)
                 {
-                    h.Source.uid = h.Id;
-                    return h.Source;
-                }).ToList(), 200);
+                    // If has found Organizations, returns 200
+                    // Maps uid to the Organizations
+                    return new ApiResponse(searchResponse.Hits.Select(h =>
+                    {
+                        h.Source.uid = h.Id;
+                        return h.Source;
+                    }).ToList(), 200);
+                }
+
+                // If has found 0 Organizations, returns 204
+                return new ApiResponse(null, 204);
             }
 
-            // If hasn't found Organizations, returns 204
-            return new ApiResponse(null, 204);
+            // If has happened and error, returns 500
+            return new ApiResponse("Internal server error when trying to get Organizations", null, 500);
         }
         #endregion
 

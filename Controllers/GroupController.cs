@@ -34,16 +34,23 @@ namespace LudocusApi.Controllers
 
             if (searchResponse.IsValid == true)
             {
-                // If has found Groups, returns 200
-                // Maps uid to the Groups
-                return new ApiResponse(searchResponse.Hits.Select(h =>
+                if (searchResponse.Hits.Count > 0)
                 {
-                    h.Source.uid = h.Id;
-                    return h.Source;
-                }).ToList(), 200);
+                    // If has found Groups, returns 200
+                    // Maps uid to the Groups
+                    return new ApiResponse(searchResponse.Hits.Select(h =>
+                    {
+                        h.Source.uid = h.Id;
+                        return h.Source;
+                    }).ToList(), 200);
+                }
+
+                // If has found 0 Groups, returns 204
+                return new ApiResponse(null, 204);
             }
 
-            return new ApiResponse(null, 204);
+            // If has happened and error, returns 500
+            return new ApiResponse("Internal server error when trying to get Groups", null, 500);
         }
         #endregion
 

@@ -55,7 +55,8 @@ namespace LudocusApi.Controllers
                         return h.Source;
                     }).ToList(), 200);
                 }
-                // Returns not found
+
+                // If has found 0 Metrics, returns 204
                 return new ApiResponse(null, 204);
             }
 

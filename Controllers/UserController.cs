@@ -34,17 +34,23 @@ namespace LudocusApi.Controllers
 
             if (searchResponse.IsValid == true)
             {
-                // If has found Users, returns 200
-                // Maps uid to the Users
-                return new ApiResponse(searchResponse.Hits.Select(h =>
+                if (searchResponse.Hits.Count > 0)
                 {
-                    h.Source.uid = h.Id;
-                    return h.Source;
-                }).ToList(), 200);
+                    // If has found Users, returns 200
+                    // Maps uid to the Users
+                    return new ApiResponse(searchResponse.Hits.Select(h =>
+                    {
+                        h.Source.uid = h.Id;
+                        return h.Source;
+                    }).ToList(), 200);
+                }
+
+                // If has found 0 Users, returns 204
+                return new ApiResponse(null, 204);
             }
 
-            // If hasn't found Users, returns 204
-            return new ApiResponse(null, 204);
+            // If has happened and error, returns 500
+            return new ApiResponse("Internal server error when trying to get Users", null, 500);
         }
         #endregion
 
