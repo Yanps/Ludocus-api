@@ -21,7 +21,7 @@ namespace LudocusApi.Controllers
         // Gets all metrics
         // GET: api/<MetricController>
         [HttpGet]
-        public ApiResponse Get()
+        public ApiResponse Get([FromQuery] string metric_classification = null, string metric_model = null)
         {
             // Verifies if user has authorization
             // TODO
@@ -31,21 +31,36 @@ namespace LudocusApi.Controllers
             ISearchResponse<Metric> searchResponse = _client.Search<Metric>(s => s
                 .From(0)
                 .Size(this._defaultSize)
+                .Query(q => q
+                    .Match(m => m
+                        .Field(f => f.classification)
+                        .Query(metric_classification)
+                    ) && q
+                    .Match(m => m
+                        .Field(f => f.model)
+                        .Query(metric_model)
+                    )
+                )
             );
 
             if (searchResponse.IsValid == true)
             {
-                // If has found Metrics, returns 200
-                // Maps uid to the Metrics
-                return new ApiResponse(searchResponse.Hits.Select(h =>
+                if (searchResponse.Hits.Count > 0)
                 {
-                    h.Source.uid = h.Id;
-                    return h.Source;
-                }).ToList(), 200);
+                    // If has found Metrics, returns 200
+                    // Maps uid to the Metrics
+                    return new ApiResponse(searchResponse.Hits.Select(h =>
+                    {
+                        h.Source.uid = h.Id;
+                        return h.Source;
+                    }).ToList(), 200);
+                }
+                // Returns not found
+                return new ApiResponse(null, 204);
             }
 
-            // Returns not found
-            return new ApiResponse(null, 204);
+            // If has happened and error, returns 500
+            return new ApiResponse("Internal server error when trying to get Metrics", null, 500);
         }
         #endregion
 
@@ -286,6 +301,33 @@ namespace LudocusApi.Controllers
             );
 
             return searchResponse.Hits.FirstOrDefault().Id;
+        }
+        
+        private int DeleteAllMetricsValuesByMetricUid(string metric_uid)
+        {
+            // If has deleted all Metrics Values, returns 200
+            return 200;
+
+            // If hasn't deleted all Metrics Values, returns 500
+            return 500;
+        }
+
+        private int DeleteAllExperiencesSetsByMetricUid(string metric_uid)
+        {
+            // If has deleted all Experiences Sets, returns 200
+            return 200;
+
+            // If hasn't deleted all Experiences Sets, returns 500
+            return 500;
+        }
+
+        private int DeleteAllExperiencesByMetricUid(string metric_uid)
+        {
+            // If has deleted all Experiences, returns 200
+            return 200;
+
+            // If hasn't deleted all Experiences, returns 500
+            return 500;
         }
         #endregion
 

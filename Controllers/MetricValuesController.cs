@@ -200,6 +200,9 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
+            // Updates update_date value's 
+            metricValues.update_date = DateTime.UtcNow;
+
             // Updates Metric Values' document
             UpdateResponse<MetricValues> updateResponse = _client.Update<MetricValues, MetricValues>(
                 new DocumentPath<MetricValues>(metricValues_uid),
