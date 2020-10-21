@@ -364,6 +364,19 @@ PUT /metrics/_doc/07ENMHUBqdy07-LfqK4F
   "create_date":"2020-10-16T03:16:00.000000+00:00"
 }
 
+PUT /metrics/_doc/C2XkSHUBHe1VIkkrHbhy
+{
+  "organization_uid":"fdefb6ee312d11e9a3ce641c67730998",
+  "owner_user_uid": "5b48d49a8fd10a0901212430",
+  "group_uid": "787dc20e354611e98af5641c67730998",
+  "code": "varios_textos",
+  "name":"Métrica de Vários Textos de Exemplo",
+  "data_type": "string",
+  "classification": "s",
+  "model": "l",
+  "create_date":"2020-10-20T23:01:00.000000+00:00"
+}
+
 
 ---------------------Tipo de Dado de Métrica-------------------------------
 -- Exemplo de criação da índice de tipos de dados de métricas
@@ -590,6 +603,14 @@ PUT /metrics_values/_doc/46wSP3UBoU9gXwWe1nzG
   "user_uid": "fd8546c4312d11e985c4641c67730998",
   "values": ["9.7"],
   "update_date":"2020-10-19T01:16:00.000000+00:00"
+}
+
+PUT /metrics_values/_doc/DmXmSHUBHe1VIkkrFbgE
+{
+  "metric_uid":"C2XkSHUBHe1VIkkrHbhy",
+  "user_uid": "fd8546c4312d11e985c4641c67730998",
+  "values": ["Texto 1", "Texto 2"],
+  "update_date":"2020-10-20T23:03:00.000000+00:00"
 }
 
 ---------------------Regra-------------------------------
