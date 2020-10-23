@@ -226,9 +226,9 @@ namespace LudocusApi.Controllers
             if (experienceSetResponse.StatusCode == 200)
             {
                 // If has deleted Experience Sets, deletes Experience's document
-                DeleteResponse response = _client.Delete<Experience>(experience_uid);
+                DeleteResponse deleteResponse = _client.Delete<Experience>(experience_uid);
 
-                if (response.IsValid == true)
+                if (deleteResponse.IsValid == true)
                 {
                     // If has deleted Experience, returns 200
                     return new ApiResponse("Deleted successfully", null, 200);
