@@ -264,29 +264,60 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
-            // Deletes Metric's document
-            DeleteResponse deleteResponse = _client.Delete<Metric>(metric_uid);
+            // First, deletes Experiences (and it's Experience Sets)
+            // with same reference Metric uid as Metric's uid
+            ExperienceController experienceController = new ExperienceController(this._configuration);
+            ApiResponse experienceApiResponse = experienceController.DeleteByMetricUid(metric_uid);
 
-            if (deleteResponse.IsValid == true)
+            if (experienceApiResponse.StatusCode == 200)
             {
-                // If has deleted Metric, deletes MetricValues by Metric uid
-                MetricValuesController metricValuesController = new MetricValuesController(this._configuration);
-                ApiResponse metricValuesResponse = metricValuesController.DeleteByMetricUid(metric_uid);
+                // If has deleted Experiences and Experience Sets,
+                // then deletes Experience Sets with same Metric uid
+                ExperienceSetController experienceSetController = new ExperienceSetController(this._configuration);
+                ApiResponse experienceSetApiResponse = experienceSetController.DeleteByMetricUid(metric_uid);
 
-                if (metricValuesResponse.StatusCode == 200)
+                if (experienceSetApiResponse.StatusCode == 200)
                 {
+                    // If has deleted Experiences Sets with same Metric uid,
+                    // then deletes Achievments with same affected Metric uid
+                    AchievmentController achievmentController = new AchievmentController(this._configuration);
+                    ApiResponse achievmentApiResponse = achievmentController.DeleteByAffectedMetricUid(metric_uid);
 
-                    // If has deleted Metric and all Metrics Values, returns 200
-                    return new ApiResponse("Deleted successfully", null, 200);
+                    if (achievmentApiResponse.StatusCode == 200)
+                    {
+                        // If has deleted all Achievments, then deletes Metrics Values
+                        MetricValuesController metricValuesController = new MetricValuesController(this._configuration);
+                        ApiResponse metricValuesResponse = metricValuesController.DeleteByMetricUid(metric_uid);
 
+                        if (metricValuesResponse.StatusCode == 200)
+                        {
+                            // If has deleted all Metrics Values, then deletes Metric's document
+                            DeleteResponse deleteResponse = _client.Delete<Metric>(metric_uid);
+
+                            if (deleteResponse.IsValid == true)
+                            {
+                                // If has deleted Metric, deletes MetricValues by Metric uid
+                                return new ApiResponse("Deleted successfully", null, 200);
+                            }
+
+                            // If hasn't deleted Metric, returns 500
+                            return new ApiResponse("Internal server error when trying to delete Metric", null, 500);
+                        }
+
+                        // If hasn't deleted Metrics Values, returns 500
+                        return new ApiResponse("Internal server error when trying to delete Metrics Values", null, 500);
+                    }
+
+                    // If hasn't deleted Achievments, returns 500
+                    return new ApiResponse("Internal server error when trying to delete Achievments", null, 500);
                 }
 
-                // If hasn't deleted Metrics Values, returns 500
-                return new ApiResponse("Internal server error when trying to delete Metrics Values", null, 500);
+                // If hasn't deleted Experiences Sets, returns 500
+                return new ApiResponse("Internal server error when trying to delete Experiences Sets", null, 500);
             }
 
-            // If hasn't deleted Metric, returns 500
-            return new ApiResponse("Internal server error when trying to delete Metric", null, 500);
+            // If hasn't deleted Experiences, returns 500
+            return new ApiResponse("Internal server error when trying to delete Experiences", null, 500);
         }
         #endregion
 
