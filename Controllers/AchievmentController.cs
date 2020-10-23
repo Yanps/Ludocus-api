@@ -150,17 +150,27 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
-            // Deletes Achievment's document
-            DeleteResponse response = _client.Delete<Achievment>(achievment_uid);
+            // Deletes Experience Sets first
+            ExperienceSetController experienceSetController = new ExperienceSetController(this._configuration);
+            ApiResponse experienceSetResponse = experienceSetController.DeleteByAchievmentUid(achievment_uid);
 
-            if (response.IsValid == true)
+            if (experienceSetResponse.StatusCode == 200)
             {
-                // If has deleted Achievment, returns 200
-                return new ApiResponse("Deleted successfully", null, 200);
+                // If has deleted Experience Sets, deletes Achievment's document
+                DeleteResponse deleteResponse = _client.Delete<Achievment>(achievment_uid);
+
+                if (deleteResponse.IsValid == true)
+                {
+                    // If has deleted Achievment, returns 200
+                    return new ApiResponse("Deleted successfully", null, 200);
+                }
+
+                // If hasn't deleted Achievment, returns 500
+                return new ApiResponse("Internal server error when trying to delete Achievment", null, 500);
             }
 
-            // If hasn't deleted Achievment, returns 500
-            return new ApiResponse("Internal server error when trying to delete Achievment", null, 500);
+            // If hasn't deleted Experience Sets, returns 500
+            return new ApiResponse("Internal server error when trying to delete Experience Sets", null, 500);
         }
         #endregion
 
