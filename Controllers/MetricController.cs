@@ -254,41 +254,8 @@ namespace LudocusApi.Controllers
         }
         #endregion
 
-        #region Delete Metric by code
-        // Deletes Metric by code
-        // DELETE api/<MetricController>/code/matematica_2020.2
-        [HttpDelete("code/{code}")]
-        public ApiResponse DeleteByCode(string code)
-        {
-            // Verifies if user has authorization
-            // TODO
-            // return new ApiResponse(null, 401);
-
-            // Gets organization_uid
-            string organization_uid = "fdefb6ee312d11e9a3ce641c67730998";
-
-            // Gets owner_user_uid
-            string owner_user_uid = "5b48d49a8fd10a0901212430";
-
-            // Gets Metric's uid
-            string metric_uid = GetMetricUidByCode(code, organization_uid, owner_user_uid);
-
-            // Deletes Metrics's document
-            DeleteResponse response = _client.Delete<Metric>(metric_uid);
-
-            if (response.IsValid == true)
-            {
-                // If has deleted Metric, returns 200
-                return new ApiResponse("Deleted successfully", null, 200);
-            }
-
-            // If hasn't deleted Metric, returns 500
-            return new ApiResponse("Internal server error when trying to delete Metric", null, 500);
-        }
-        #endregion
-
-        #region Delete Metric by code
-        // Deletes Metric by code
+        #region Delete Metric by uid
+        // Deletes Metric by uid
         // DELETE api/<MetricController>/VaywPnUBoU9gXwWefHpk
         [HttpDelete("{metric_uid}")]
         public ApiResponse DeleteByUid(string metric_uid)
@@ -298,12 +265,24 @@ namespace LudocusApi.Controllers
             // return new ApiResponse(null, 401);
 
             // Deletes Metric's document
-            DeleteResponse response = _client.Delete<Metric>(metric_uid);
+            DeleteResponse deleteResponse = _client.Delete<Metric>(metric_uid);
 
-            if (response.IsValid == true)
+            if (deleteResponse.IsValid == true)
             {
-                // If has deleted Metric, returns 200
-                return new ApiResponse("Deleted successfully", null, 200);
+                // If has deleted Metric, deletes MetricValues by Metric uid
+                MetricValuesController metricValuesController = new MetricValuesController(this._configuration);
+                ApiResponse metricValuesResponse = metricValuesController.DeleteByMetricUid(metric_uid);
+
+                if (metricValuesResponse.StatusCode == 200)
+                {
+
+                    // If has deleted Metric and all Metrics Values, returns 200
+                    return new ApiResponse("Deleted successfully", null, 200);
+
+                }
+
+                // If hasn't deleted Metrics Values, returns 500
+                return new ApiResponse("Internal server error when trying to delete Metrics Values", null, 500);
             }
 
             // If hasn't deleted Metric, returns 500
