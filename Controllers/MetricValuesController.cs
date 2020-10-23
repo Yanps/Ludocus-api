@@ -315,6 +315,35 @@ namespace LudocusApi.Controllers
         }
         #endregion
 
+        #region Delete Metrics Values by User uid
+        // DELETE api/<MetricValuesController>/user/fd8546c4312d11e985c4641c67730998
+        [HttpDelete("user/{user_uid}")]
+        public ApiResponse DeleteByUserUid(string user_uid)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            var deleteResponse = _client.DeleteByQuery<MetricValues>(q => q
+                .Query(rq => rq
+                    .Match(m => m
+                        .Field(f => f.user_uid)
+                        .Query(user_uid)
+                    )
+                )
+            );
+
+            if (deleteResponse.IsValid == true)
+            {
+                // If has deleted all Metrics Values, returns 200
+                return new ApiResponse("Deleted successfully", null, 200);
+            }
+
+            // If hasn't deleted Metric Values, returns 500
+            return new ApiResponse("Internal server error when trying to delete Metric Values", null, 500);
+        }
+        #endregion
+
         #region Constructor
         public MetricValuesController(IConfiguration configuration) : base(configuration, "metrics_values")
         {

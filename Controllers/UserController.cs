@@ -230,12 +230,24 @@ namespace LudocusApi.Controllers
             // return new ApiResponse(null, 401);
 
             // Deletes User's document
-            DeleteResponse response = _client.Delete<User>(user_uid);
+            DeleteResponse deleteResponse = _client.Delete<User>(user_uid);
 
-            if (response.IsValid == true)
+            if (deleteResponse.IsValid == true)
             {
-                // If has deleted User, returns 200
-                return new ApiResponse("Deleted successfully", null, 200);
+                // If has deleted User, deletes MetricValues by User uid
+                MetricValuesController metricValuesController = new MetricValuesController(this._configuration);
+                ApiResponse metricValuesResponse = metricValuesController.DeleteByUserUid(user_uid);
+
+                if (metricValuesResponse.StatusCode == 200)
+                {
+                    
+                    // If has deleted User and all Metrics Values, returns 200
+                    return new ApiResponse("Deleted successfully", null, 200);
+                    
+                }
+
+                // If hasn't deleted Metrics Values, returns 500
+                return new ApiResponse("Internal server error when trying to delete Metrics Values", null, 500);
             }
 
             // If hasn't deleted User, returns 500
