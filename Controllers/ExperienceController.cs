@@ -266,14 +266,15 @@ namespace LudocusApi.Controllers
 
             if (searchResponse.IsValid == true)
             {
+                // If has found Experiences
                 // Maps Experiences uids
-                List<Experience> experience_list = searchResponse.Hits.Select(h =>
+                List<Experience> experiences_list = searchResponse.Hits.Select(h =>
                 {
                     h.Source.uid = h.Id;
                     return h.Source;
                 }).ToList();
 
-                foreach (Experience experience in experience_list)
+                foreach (Experience experience in experiences_list)
                 {
                     // Deletes Experience by uid (and it's Experience Sets)
                     ApiResponse apiResponse = this.DeleteByUid(experience.uid);
