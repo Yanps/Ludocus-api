@@ -141,10 +141,10 @@ namespace LudocusApi.Controllers
         }
         #endregion
 
-        #region Delete Achievment
+        #region Delete Achievment by uid
         // DELETE api/<AchievmentController>/23ba942aaca411e9b143023fad48cc44
         [HttpDelete("{achievment_uid}")]
-        public ApiResponse Delete(string achievment_uid)
+        public ApiResponse DeleteByUid(string achievment_uid)
         {
             // Verifies if user has authorization
             // TODO
@@ -171,6 +171,58 @@ namespace LudocusApi.Controllers
 
             // If hasn't deleted Experience Sets, returns 500
             return new ApiResponse("Internal server error when trying to delete Experience Sets", null, 500);
+        }
+        #endregion
+
+        #region Delete Achievment by affected Metric uid
+        // DELETE api/<AchievmentController>/metric/23ba942aaca411e9b143023fad48cc44
+        [HttpDelete("metric/{affected_metric_uid}")]
+        public ApiResponse DeleteByAffectedMetricUid(string affected_metric_uid)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Queries Achievments with affected Metric uid
+            ISearchResponse<Achievment> searchResponse = _client.Search<Achievment>(s => s
+                .From(0)
+                .Size(this._defaultSize)
+                .Query(q => q
+                    .Match(m => m
+                        .Field(f => f.affected_metric_uid)
+                        .Query(affected_metric_uid)
+                    )
+                )
+            );
+
+            if (searchResponse.IsValid == true)
+            {
+                // If has found Achievments
+                // Maps Achievments uids
+                List<Achievment> achievments_list = searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }).ToList();
+
+                // For each Achievment in Achievment list,
+                // deletes Achievment and its Experiences Sets
+                foreach (Achievment achievment in achievments_list)
+                {
+                    ApiResponse achievmentApiResponse = this.DeleteByUid(achievment.uid);
+
+                    if (achievmentApiResponse.StatusCode == 500)
+                    {
+                        // If hasn't deleted Achievment correctly, returns 500
+                        return new ApiResponse("Internal server error when trying to delete Achievment", null, 500);
+                    }
+                }
+
+                // If has deleted all Achievments by affected Metric uid, returns 200
+                return new ApiResponse("Deleted successfully", null, 200);
+            }
+            // If hasn't found Achievments correctly, returns 500
+            return new ApiResponse("Internal server error when trying to find Achievments", null, 500);
         }
         #endregion
 
