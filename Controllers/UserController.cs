@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using AutoWrapper.Wrappers;
 using LudocusApi.Models;
@@ -129,19 +131,61 @@ namespace LudocusApi.Controllers
         #region Create new User
         // POST api/<UserController>
         [HttpPost]
-        public ApiResponse Post([FromBody] User user)
+        public ApiResponse Create([FromBody] User user)
         {
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
+
+            // Sets User's organization_uid and uid
+            user.uid = null;
+            user.organization_uid = "fdefb6ee312d11e9a3ce641c67730998";
+
+            // Hashes password with md5
+            user.password_hash = this.GenerateHash(user.password_hash);
+
+            // Creates a initial session token
+            user.session = new Guid().ToString();
+
+            // Sets User's CreateDate
+            user.create_date = DateTime.UtcNow;
 
             // Indexes User's document
             IndexResponse indexResponse = _client.IndexDocument(user);
 
             if (indexResponse.IsValid == true)
             {
-                // If has created User, returns 201
-                return new ApiResponse(indexResponse.Id, 201);
+                // If has created User, creates MetricValues for Metrics
+                // Search all Metrics first
+                MetricController metricController = new MetricController(this._configuration);
+                ApiResponse metricResponse = metricController.GetAll();
+
+                if (metricResponse.StatusCode == 200)
+                {
+                    // If has found Metrics, creates MetricValues for each Metric
+                    List<Metric> metricList = (List<Metric>)metricResponse.Result;
+
+                    List<MetricValues> metric_values_list = new List<MetricValues>();
+                    foreach (Metric metric in metricList)
+                    {
+                        // Adds MetricValues to the Metrics Values list
+                        metric_values_list.Add(new MetricValues(null, metric.uid, indexResponse.Id, new List<string>(), DateTime.UtcNow));
+                    }
+                    MetricValuesController metricValuesController = new MetricValuesController(this._configuration);
+                    // Bulk adds all Metrics Values
+                    ApiResponse metricValuesResponse = metricValuesController.CreateBulk(metric_values_list);
+                    if (metricValuesResponse.StatusCode == 201)
+                    {
+                        // If has created User and MetricValues, returns 201
+                        return new ApiResponse(indexResponse.Id, 201);
+                    }
+
+                    // If hasn't created Metrics Values, returns 500
+                    return new ApiResponse("Internal server error when trying to create Metrics Values", null, 500);
+                }
+
+                // If hasn't found Metrics, returns 500
+                return new ApiResponse("Internal server error when trying to get Metrics to create Metrics Values", null, 500);
             }
 
             // If hasn't created User, returns 500
@@ -196,6 +240,26 @@ namespace LudocusApi.Controllers
 
             // If hasn't deleted User, returns 500
             return new ApiResponse("Internal server error when trying to delete User", null, 500);
+        }
+        #endregion
+
+        #region Helpers
+        private string GenerateHash(string password)
+        {
+            MD5 md5Hash = MD5.Create();
+            // Converter a String para array de bytes, que é como a biblioteca trabalha.
+            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+            // Cria-se um StringBuilder para recompôr a string.
+            StringBuilder sBuilder = new StringBuilder();
+
+            // Loop para formatar cada byte como uma String em hexadecimal
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+
+            return sBuilder.ToString();
         }
         #endregion
 

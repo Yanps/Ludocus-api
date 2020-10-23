@@ -21,7 +21,7 @@ namespace LudocusApi.Controllers
         // Gets all metrics
         // GET: api/<MetricController>
         [HttpGet]
-        public ApiResponse Get([FromQuery] string metric_classification = null, string metric_model = null)
+        public ApiResponse GetAll([FromQuery] string metric_classification = null, string metric_model = null)
         {
             // Verifies if user has authorization
             // TODO
@@ -133,7 +133,7 @@ namespace LudocusApi.Controllers
         // Creates new Metric
         // POST api/<MetricController>
         [HttpPost]
-        public ApiResponse Post([FromBody] Metric metric)
+        public ApiResponse Create([FromBody] Metric metric)
         {
             // Verifies if user has authorization
             // TODO
@@ -170,7 +170,7 @@ namespace LudocusApi.Controllers
                     }
                     MetricValuesController metricValuesController = new MetricValuesController(this._configuration);
                     // Bulk adds all Metrics Values
-                    ApiResponse metricValuesResponse = metricValuesController.PostBulk(metric_values_list);
+                    ApiResponse metricValuesResponse = metricValuesController.CreateBulk(metric_values_list);
                     if (metricValuesResponse.StatusCode == 201)
                     {
                         // If has created Metric and MetricValues, returns 201

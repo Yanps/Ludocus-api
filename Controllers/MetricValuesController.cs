@@ -169,7 +169,7 @@ namespace LudocusApi.Controllers
         #region Create new Metrics Values by Bulk
         // POST api/<MetricValuesController>
         [HttpPost]
-        public ApiResponse PostBulk([FromBody] List<MetricValues> metric_values_list)
+        public ApiResponse CreateBulk([FromBody] List<MetricValues> metric_values_list)
         {
             // Verifies if user has authorization
             // TODO
