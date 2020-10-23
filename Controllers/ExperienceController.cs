@@ -213,23 +213,33 @@ namespace LudocusApi.Controllers
         #region Delete Experience
         // DELETE api/<ExperienceController>/33ba942aaca411e9b143023fad48cc33
         [HttpDelete("{experience_uid}")]
-        public ApiResponse Delete(string experience_uid)
+        public ApiResponse DeleteByUid(string experience_uid)
         {
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
 
-            // Deletes Experience's document
-            DeleteResponse response = _client.Delete<Experience>(experience_uid);
+            // Deletes Experience Sets first
+            ExperienceSetController experienceSetController = new ExperienceSetController(this._configuration);
+            ApiResponse experienceSetResponse = experienceSetController.DeleteByExperienceUid(experience_uid);
 
-            if (response.IsValid == true)
+            if (experienceSetResponse.StatusCode == 200)
             {
-                // If has deleted Experience, returns 200
-                return new ApiResponse("Deleted successfully", null, 200);
+                // If has deleted Experience Sets, deletes Experience's document
+                DeleteResponse response = _client.Delete<Experience>(experience_uid);
+
+                if (response.IsValid == true)
+                {
+                    // If has deleted Experience, returns 200
+                    return new ApiResponse("Deleted successfully", null, 200);
+                }
+
+                // If hasn't deleted Experience, returns 500
+                return new ApiResponse("Internal server error when trying to delete Experience", null, 500);
             }
 
-            // If hasn't deleted Experience, returns 500
-            return new ApiResponse("Internal server error when trying to delete Experience", null, 500);
+            // If hasn't deleted Experience Sets, returns 500
+            return new ApiResponse("Internal server error when trying to delete Experience Sets", null, 500);
         }
         #endregion
 

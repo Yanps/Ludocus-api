@@ -240,7 +240,7 @@ namespace LudocusApi.Controllers
             // return new ApiResponse(null, 401);
 
             // Deletes Experience Sets documents by Experience uid
-            var deleteResponse = _client.DeleteByQuery<ExperienceSet>(q => q
+            DeleteByQueryResponse deleteResponse = _client.DeleteByQuery<ExperienceSet>(q => q
                 .Query(rq => rq
                     .Match(m => m
                         .Field(f => f.experience_uid)
