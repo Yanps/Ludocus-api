@@ -140,16 +140,49 @@ namespace LudocusApi.Controllers
             // return new ApiResponse(null, 401);
 
             // Sets Metric's organization_uid and owner_user_uid
+            metric.uid = null;
             metric.organization_uid = "fdefb6ee312d11e9a3ce641c67730998";
             metric.owner_user_uid = "5b48d49a8fd10a0901212430";
+
+            // Sets Metric's CreateDate
+            metric.create_date = DateTime.UtcNow;
 
             // Indexes Metric's document
             IndexResponse indexResponse = _client.IndexDocument(metric);
 
             if (indexResponse.IsValid == true)
             {
-                // If has created Metric, returns 201
-                return new ApiResponse(indexResponse.Id, 201);
+                // If has created Metric, creates MetricValues for users
+                // Search all Users first
+                UserController userController = new UserController(this._configuration);
+                ApiResponse userResponse = userController.GetAll();
+
+                if (userResponse.StatusCode == 200)
+                {
+                    // If has found Users, creates MetricValues for each User
+                    List<User> userList = (List<User>)userResponse.Result;
+
+                    List<MetricValues> metric_values_list = new List<MetricValues>();
+                    foreach (User user in userList)
+                    {
+                        // Adds MetricValues to the Metrics Values list
+                        metric_values_list.Add(new MetricValues(null, indexResponse.Id, user.uid, new List<string>(), DateTime.UtcNow));
+                    }
+                    MetricValuesController metricValuesController = new MetricValuesController(this._configuration);
+                    // Bulk adds all Metrics Values
+                    ApiResponse metricValuesResponse = metricValuesController.PostBulk(metric_values_list);
+                    if (metricValuesResponse.StatusCode == 201)
+                    {
+                        // If has created Metric and MetricValues, returns 201
+                        return new ApiResponse(indexResponse.Id, 201);
+                    }
+
+                    // If hasn't created Metrics Values, returns 500
+                    return new ApiResponse("Internal server error when trying to create Metrics Values", null, 500);
+                }
+
+                // If hasn't found User, returns 500
+                return new ApiResponse("Internal server error when trying to get Users to create Metrics Values", null, 500);
             }
 
             // If hasn't created Metric, returns 500
