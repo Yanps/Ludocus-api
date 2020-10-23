@@ -169,7 +169,7 @@ namespace LudocusApi.Controllers
         #region Create new Metrics Values by Bulk
         // POST api/<MetricValuesController>
         [HttpPost]
-        public ApiResponse CreateBulk([FromBody] List<MetricValues> metric_values_list)
+        public ApiResponse BulkCreate([FromBody] List<MetricValues> metric_values_list)
         {
             // Verifies if user has authorization
             // TODO
@@ -200,7 +200,7 @@ namespace LudocusApi.Controllers
         #region Edit Metric Values
         // PUT api/<MetricValuesController>/rrGcMXUBqdy07-Lf1681
         [HttpPut("{metricValues_uid}")]
-        public ApiResponse Put(string metricValues_uid, [FromBody] MetricValues metricValues)
+        public ApiResponse Edit(string metricValues_uid, [FromBody] MetricValues metricValues)
         {
             // Verifies if user has authorization
             // TODO
@@ -230,7 +230,7 @@ namespace LudocusApi.Controllers
         #region Edit Metrics Values by Bulk
         // PUT api/<MetricValuesController>
         [HttpPut]
-        public ApiResponse PutBulk([FromBody] List<MetricValues> metric_values_list)
+        public ApiResponse BulkEdit([FromBody] List<MetricValues> metric_values_list)
         {
             // Verifies if user has authorization
             // TODO
@@ -267,7 +267,7 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Delete Metric Values
-        // DELETE api/<MetricValuesController>/5
+        // DELETE api/<MetricValuesController>/4LEVMHUBqdy07-Lfda6U
         [HttpDelete("{metricValues_uid}")]
         public ApiResponse Delete(string metricValues_uid)
         {
@@ -276,7 +276,7 @@ namespace LudocusApi.Controllers
             // return new ApiResponse(null, 401);
 
             // Deletes Metric Values' document
-            DeleteResponse response = _client.Delete<Organization>(metricValues_uid);
+            DeleteResponse response = _client.Delete<MetricValues>(metricValues_uid);
 
             if (response.IsValid == true)
             {
@@ -286,6 +286,32 @@ namespace LudocusApi.Controllers
 
             // If hasn't deleted Metric Values, returns 500
             return new ApiResponse("Internal server error when trying to delete Metric Values", null, 500);
+        }
+        #endregion
+
+        #region Delete Metrics Values by Bulk
+        // DELETE api/<MetricValuesController>
+        [HttpDelete]
+        public ApiResponse DeleteByBulk([FromBody] List<string> metrics_values_uid_list)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            foreach (string metric_values_uid in metrics_values_uid_list)
+            {
+                // Deletes Metric Values' document
+                DeleteResponse response = _client.Delete<MetricValues>(metric_values_uid);
+
+                if (response.IsValid != true)
+                {
+                    // If hasn't deleted Metric Values, returns 500
+                    return new ApiResponse("Internal server error when trying to delete Metric Values", null, 500);
+                }
+            }
+
+            // If has deleted all Metrics Values, returns 200
+            return new ApiResponse("Deleted successfully", null, 200);
         }
         #endregion
 

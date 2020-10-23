@@ -170,7 +170,7 @@ namespace LudocusApi.Controllers
                     }
                     MetricValuesController metricValuesController = new MetricValuesController(this._configuration);
                     // Bulk adds all Metrics Values
-                    ApiResponse metricValuesResponse = metricValuesController.CreateBulk(metric_values_list);
+                    ApiResponse metricValuesResponse = metricValuesController.BulkCreate(metric_values_list);
                     if (metricValuesResponse.StatusCode == 201)
                     {
                         // If has created Metric and MetricValues, returns 201
