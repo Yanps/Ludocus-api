@@ -353,7 +353,8 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
-            var deleteResponse = _client.DeleteByQuery<MetricValues>(q => q
+            // Deletes Metrics Values by Metric uid
+            DeleteByQueryResponse deleteResponse = _client.DeleteByQuery<MetricValues>(q => q
                 .Query(rq => rq
                     .Match(m => m
                         .Field(f => f.metric_uid)

@@ -20,7 +20,7 @@ namespace LudocusApi.Controllers
         #region Get all Experiences
         // GET: api/<ExperienceController>
         [HttpGet]
-        public ApiResponse Get()
+        public ApiResponse GetAll()
         {
             // Verifies if user has authorization
             // TODO
