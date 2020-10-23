@@ -243,6 +243,57 @@ namespace LudocusApi.Controllers
         }
         #endregion
 
+        #region Delete Experiences by reference Metric uid
+        // DELETE api/<ExperienceController>/metric/33ba942aaca411e9b143023fad48cc33
+        [HttpDelete("metric/{metric_uid}")]
+        public ApiResponse DeleteByMetricUid(string metric_uid)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Queries Experiences with reference Metric uid
+            ISearchResponse<Experience> searchResponse = _client.Search<Experience>(s => s
+                .From(0)
+                .Size(this._defaultSize)
+                .Query(q => q
+                    .Match(m => m
+                        .Field(f => f.reference_metric_uid)
+                        .Query(metric_uid)
+                    )
+                )
+            );
+
+            if (searchResponse.IsValid == true)
+            {
+                // Maps Experiences uids
+                List<Experience> experience_list = searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }).ToList();
+
+                foreach (Experience experience in experience_list)
+                {
+                    // Deletes Experience by uid (and it's Experience Sets)
+                    ApiResponse apiResponse = this.DeleteByUid(experience.uid);
+
+                    if (apiResponse.StatusCode == 500)
+                    {
+                        // If hasn't deleted Experience, returns 500
+                        return new ApiResponse("Internal server error when trying to delete Experience", null, 500);
+                    }
+                }
+                
+                // If has deleted Experiences, returns 200
+                return new ApiResponse("Deleted successfully", null, 200);
+            }
+
+            // If hasn't deleted Experiences, returns 500
+            return new ApiResponse("Internal server error when trying to delete Experiences", null, 500);
+        }
+        #endregion
+
         #region Constructor
         public ExperienceController(IConfiguration configuration) : base(configuration, "experiences")
         {
