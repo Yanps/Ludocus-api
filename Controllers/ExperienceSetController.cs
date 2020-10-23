@@ -260,6 +260,36 @@ namespace LudocusApi.Controllers
         }
         #endregion
 
+        #region Delete Experience Sets by Achievment Uid
+        // DELETE api/<ExperienceSetController>/achievment/33ba942aaca411e9b143023fad48cc33
+        [HttpDelete("achievment/{achievment_uid}")]
+        public ApiResponse DeleteByAchievmentUid(string achievment_uid)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Deletes Experience Sets documents by Achievment uid
+            DeleteByQueryResponse deleteResponse = _client.DeleteByQuery<ExperienceSet>(q => q
+                .Query(rq => rq
+                    .Match(m => m
+                        .Field(f => f.achievment_uid)
+                        .Query(achievment_uid)
+                    )
+                )
+            );
+
+            if (deleteResponse.IsValid == true)
+            {
+                // If has deleted Experience Sets, returns 200
+                return new ApiResponse("Deleted successfully", null, 200);
+            }
+
+            // If hasn't deleted Experience Sets, returns 500
+            return new ApiResponse("Internal server error when trying to delete Experience Sets", null, 500);
+        }
+        #endregion
+
         #region Constructor
         public ExperienceSetController(IConfiguration configuration) : base(configuration, "experiencesets")
         {
