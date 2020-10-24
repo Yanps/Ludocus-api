@@ -21,7 +21,7 @@ namespace LudocusApi.Controllers
         #region Get all Achievments
         // GET: api/<AchievmentController>
         [HttpGet]
-        public ApiResponse Get()
+        public ApiResponse GetAll([FromQuery] string affected_metric_uid = null)
         {
             // Verifies if user has authorization
             // TODO
@@ -31,6 +31,12 @@ namespace LudocusApi.Controllers
             ISearchResponse<Achievment> searchResponse = _client.Search<Achievment>(s => s
                 .From(0)
                 .Size(this._defaultSize)
+                .Query(q => q
+                    .Match(m => m
+                        .Field(f => f.affected_metric_uid)
+                        .Query(affected_metric_uid)
+                    )
+                )
             );
 
             if (searchResponse.IsValid == true)
