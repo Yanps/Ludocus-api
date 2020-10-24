@@ -321,7 +321,7 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Constructor
-        public ExperienceSetController(IConfiguration configuration) : base(configuration, "experiencesets")
+        public ExperienceSetController(IConfiguration configuration) : base(configuration, "experiences_sets")
         {
         }
         #endregion
