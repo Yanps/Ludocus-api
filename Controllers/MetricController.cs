@@ -17,11 +17,11 @@ namespace LudocusApi.Controllers
     [ApiController]
     public class MetricController : TemplateController
     {
-        #region Get all Metrics
+        #region Get all Metrics with optional parameters
         // Gets all metrics
         // GET: api/<MetricController>
         [HttpGet]
-        public ApiResponse GetAll([FromQuery] string metric_classification = null, string metric_model = null)
+        public ApiResponse GetAll([FromQuery] string metric_data_type = null, string metric_classification = null, string metric_model = null)
         {
             // Verifies if user has authorization
             // TODO
@@ -32,6 +32,10 @@ namespace LudocusApi.Controllers
                 .From(0)
                 .Size(this._defaultSize)
                 .Query(q => q
+                    .Match(m => m
+                        .Field(f => f.data_type)
+                        .Query(metric_data_type)
+                    ) && q
                     .Match(m => m
                         .Field(f => f.classification)
                         .Query(metric_classification)
