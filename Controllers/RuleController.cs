@@ -59,7 +59,7 @@ namespace LudocusApi.Controllers
         #region Get Rule by uid
         // GET api/<RuleController>/81ba942aaca411e9b143023fad48cc44
         [HttpGet("{rule_uid}")]
-        public ApiResponse Get(string rule_uid)
+        public ApiResponse GetByUid(string rule_uid)
         {
             // Verifies if user has authorization
             // TODO
