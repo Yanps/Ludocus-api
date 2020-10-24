@@ -8,6 +8,7 @@ using LudocusApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Nest;
+using static LudocusApi.Models.Rule;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -42,7 +43,7 @@ namespace LudocusApi.Controllers
                     return new ApiResponse(searchResponse.Hits.Select(h =>
                     {
                         h.Source.uid = h.Id;
-                        return h.Source;
+                        return new RuleResponse(h.Source);
                     }).ToList(), 200);
                 }
 
