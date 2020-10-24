@@ -20,16 +20,26 @@ namespace LudocusApi.Controllers
         #region Get all Metrics Values
         // GET: api/<MetricValuesController>
         [HttpGet]
-        public ApiResponse Get()
+        public ApiResponse GetAll([FromQuery] string metric_uid = null, string user_uid = null)
         {
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
 
-            // Queries MetricsValues
+            // Queries Metrics Values
             ISearchResponse<MetricValues> searchResponse = _client.Search<MetricValues>(s => s
                 .From(0)
                 .Size(this._defaultSize)
+                .Query(q => q
+                    .Match(m => m
+                        .Field(f => f.metric_uid)
+                        .Query(metric_uid)
+                    ) && q
+                    .Match(m => m
+                        .Field(f => f.user_uid)
+                        .Query(user_uid)
+                    )
+                )
             );
 
             if (searchResponse.IsValid == true)
