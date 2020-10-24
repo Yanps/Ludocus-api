@@ -64,7 +64,7 @@ namespace LudocusApi.Controllers
         #region Get Achievment by uid
         // GET api/<AchievmentController>/23ba942aaca411e9b143023fad48cc44
         [HttpGet("{achievment_uid}")]
-        public ApiResponse Get(string achievment_uid)
+        public ApiResponse GetByUid(string achievment_uid)
         {
             // Verifies if user has authorization
             // TODO
