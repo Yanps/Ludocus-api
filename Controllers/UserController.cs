@@ -22,16 +22,38 @@ namespace LudocusApi.Controllers
         #region Get all Users
         // GET: api/<UserController>
         [HttpGet]
-        public ApiResponse GetAll()
+        public ApiResponse GetAll([FromBody] string response_type = "suppressed")
         {
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
 
+            Func<SourceFilterDescriptor<User>, ISourceFilter> selector;
             // Queries Users
+            if (response_type == "suppressed")
+            {
+                selector = new Func<SourceFilterDescriptor<User>, ISourceFilter>(
+                    sr => sr
+                    .Includes(fi => fi
+                        .Field(f => f.uid)
+                        .Field(f => f.organization_uid)
+                        .Field(f => f.code)
+                        .Field(f => f.name)
+                        .Field(f => f.surname)
+                        .Field(f => f.email)
+                    )
+                );
+            }
+            else
+            {
+                // response_type == "full"
+                selector = null;
+            }
+
             ISearchResponse<User> searchResponse = _client.Search<User>(s => s
                 .From(0)
                 .Size(this._defaultSize)
+                .Source(selector)
             );
 
             if (searchResponse.IsValid == true)

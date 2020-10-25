@@ -159,15 +159,15 @@ namespace LudocusApi.Controllers
                 // If has created Metric, creates MetricValues for users
                 // Search all Users first
                 UserController userController = new UserController(this._configuration);
-                ApiResponse userResponse = userController.GetAll();
+                ApiResponse userApiResponse = userController.GetAll();
 
-                if (userResponse.StatusCode == 200)
+                if (userApiResponse.StatusCode == 200)
                 {
                     // If has found Users, creates MetricValues for each User
-                    List<User> userList = (List<User>)userResponse.Result;
+                    List<UserResponse> userList = (List<UserResponse>)userApiResponse.Result;
 
                     List<MetricValues> metric_values_list = new List<MetricValues>();
-                    foreach (User user in userList)
+                    foreach (UserResponse user in userList)
                     {
                         // Adds MetricValues to the Metrics Values list
                         metric_values_list.Add(new MetricValues(null, indexResponse.Id, user.uid, new List<string>(), DateTime.UtcNow));

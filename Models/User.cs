@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace LudocusApi.Models
 {
-    [ElasticsearchType(IdProperty = nameof(uid))]
-    public class User
+    public class UserResponse
     {
         public string uid { get; set; }
 
@@ -20,7 +19,11 @@ namespace LudocusApi.Models
         public string surname { get; set; }
 
         public string email { get; set; }
+    }
 
+    [ElasticsearchType(IdProperty = nameof(uid))]
+    public class User: UserResponse
+    {
         public string password_hash { get; set; }
 
         public string role { get; set; }
