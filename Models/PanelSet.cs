@@ -9,15 +9,12 @@ namespace LudocusApi.Models
     {
         public MetricValues metric_values { get; set; }
 
-        public User user { get; set; }
+        public UserResponse user { get; set; }
 
-        public Metric metric { get; set; }
-
-        public PanelSet(MetricValues metric_values, User user, Metric metric)
+        public PanelSet(MetricValues metric_values, UserResponse user)
         {
             this.metric_values = metric_values;
             this.user = user;
-            this.metric = metric;
         }
     }
 }

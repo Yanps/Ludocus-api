@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoWrapper.Wrappers;
+using LudocusApi.Helpers;
 using LudocusApi.Models;
 using LudocusApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -39,13 +40,36 @@ namespace LudocusApi.Controllers
             {
                 if (searchResponse.Hits.Count > 0)
                 {
-                    // If has found Experiences, returns 200
-                    // Maps uid to the Experiences
-                    return new ApiResponse(searchResponse.Hits.Select(h =>
+                    // If has found Experiences, maps uid to the Experiences
+                    List<Experience> experiences_list = searchResponse.Hits.Select(h =>
                     {
                         h.Source.uid = h.Id;
                         return h.Source;
-                    }).ToList(), 200);
+                    }).ToList();
+
+                    // Instantiates Metric Controller
+                    MetricController metricController = new MetricController(this._configuration);
+                    // Instantiates Experience Response list
+                    List<ExperienceResponse> experiences_response_list = new List<ExperienceResponse>();
+
+                    // Searchs Metric data for each Experience
+                    foreach (Experience experience in experiences_list)
+                    {
+                        ApiResponse metricApiResponse = metricController.GetByUid(experience.reference_metric_uid);
+
+                        if (metricApiResponse.StatusCode == 200)
+                        {
+                            // If has found Metric, adds to the response object
+                            experiences_response_list.Add(new ExperienceResponse(experience, (Metric)metricApiResponse.Result));
+                        } else
+                        {
+                            // If has happened and error, returns 500
+                            return new ApiResponse("Internal server error when trying to get Metric data", null, 500);
+                        }
+                    }
+
+                    // If has found all Experiences and Metrics data, returns 200
+                    return new ApiResponse(experiences_response_list, 200);
                 }
 
                 // If has found 0 Experiences, returns 204
@@ -92,67 +116,90 @@ namespace LudocusApi.Controllers
             // return new ApiResponse(null, 401);
 
             // Queries Experience by uid
-            ApiResponse experienceResponse = this.GetByUid(experience_uid);
+            ApiResponse experienceApiResponse = this.GetByUid(experience_uid);
 
-            // Gets Experience's reference Metric Values
-
-            if (experienceResponse.StatusCode == 200)
+            if (experienceApiResponse.StatusCode == 200)
             {
                 // Maps uid to the Experience
-                Experience experience = (Experience)experienceResponse.Result;
-                experience.uid = experience_uid;
+                Experience main_experience = (Experience)experienceApiResponse.Result;
+                main_experience.uid = experience_uid;
 
-                // If has found Experience, creates Experience Panel object
-                ExperiencePanel experiencePanel = new ExperiencePanel();
-                experiencePanel.experience = experience;
+               // Gets Experience's reference Metric's Data
+                MetricController metricController = new MetricController(this._configuration);
+                ApiResponse metricApiResponse = metricController.GetByUid(main_experience.reference_metric_uid);
 
-                // If is Level type Experience, gets Metric Values for user
-
-                // If is Rank type Experience, gets Metric Values, User and Metric data
-                // Gets Experience's reference Metric Values by reference Metric uid
-                MetricValuesController metricValuesController = new MetricValuesController(this._configuration);
-                ApiResponse metricValuesResponse = metricValuesController.GetByMetricUid(experiencePanel.experience.reference_metric_uid);
-
-                //{ , LudocusApi.Models.MetricValues>}
-
-                //var a = (System.Linq.Enumerable.SelectArrayIterator<Nest.IHit<LudocusApi.Models.MetricValues>)metricValuesResponse.Result;
-
-                //var b = a.ToList();
-
-                List<MetricValues> metricsValuesList = ((List<MetricValues>)metricValuesResponse.Result);
-
-                foreach (MetricValues metricValues in metricsValuesList)
+                if (metricApiResponse.StatusCode == 200)
                 {
-                    // Gets User data by User uid
-                    UserController userController = new UserController(this._configuration);
-                    ApiResponse userResponse = userController.GetByUid(metricValues.user_uid);
+                    // Maps uid to the Metric
+                    Metric reference_metric = (Metric)metricApiResponse.Result;
+                    reference_metric.uid = main_experience.reference_metric_uid;
 
-                    if (userResponse.StatusCode == 200)
-                    {
-                        // Gets Metric data by Metric uid
-                        MetricController metricController = new MetricController(this._configuration);
-                        ApiResponse metricResponse = metricController.GetByUid(metricValues.metric_uid);
+                    // Gets All Achievments where affected Metric uid is the same as reference Metric's uid
+                    AchievmentController achievmentController = new AchievmentController(this._configuration);
+                    ApiResponse achievmentApiResponse = achievmentController.GetAll(reference_metric.uid);
 
-                        if (metricResponse.StatusCode == 200)
-                        {
-                            // Adds Panel Set to the Experience Panel
-                            experiencePanel.panel_sets.Add(new PanelSet(metricValues, (User)userResponse.Result, (Metric)metricResponse.Result));
-                        }
-                        else
-                        {
-                            // If hasn't found Metric, returns 500
-                            return new ApiResponse("Internal server error when trying to get Metric", null, 500);
-                        }
-                    }
-                    else
+                    if (achievmentApiResponse.StatusCode == 200)
                     {
-                        // If hasn't found User, returns 500
-                        return new ApiResponse("Internal server error when trying to get User", null, 500);
+                        // Maps achievments uid list
+                        List<string> achievments_uid_list = ((List<Achievment>)achievmentApiResponse.Result).Select(h =>
+                        {
+                            return h.uid;
+                        }).ToList();
+
+                        // If has found Achievments, searchs for Experiences Sets 
+                        // where Experience Set's achievment_uid is in Achievment's list searched before
+                        ExperienceSetController experienceSetController = new ExperienceSetController(this._configuration);
+                        ApiResponse experienceSetApiResponse = experienceSetController.GetByAchievmentsUidList(achievments_uid_list);
+
+                        if (experienceSetApiResponse.StatusCode == 200)
+                        {
+                            // If has found verification Experiences Sets,
+                            // creates verification Experiences Sets list
+                            List<ExperienceSet> verification_experiences_sets_list = (List<ExperienceSet>)experienceSetApiResponse.Result;
+
+                            // Then, searches for every User inside Experience's group
+                            UserController userController = new UserController(this._configuration);
+                            ApiResponse userApiResponse = userController.GetAll();
+
+                            if (userApiResponse.StatusCode == 200)
+                            {
+                                // If has found all Users,
+                                // creates Users list
+                                List<UserResponse> users_list = (List<UserResponse>)userApiResponse.Result;
+
+                                // Then, instantiates the Calculator helper with every data found
+                                Calculator helper = new Calculator(
+                                    main_experience,
+                                    reference_metric,
+                                    verification_experiences_sets_list,
+                                    users_list,
+                                    metricController,
+                                    new MetricValuesController(this._configuration),
+                                    new RuleController(this._configuration),
+                                    achievmentController);
+
+                                // Calculates reference Metric's Metric Values for each User,
+                                // and returns Experience Panel
+                                ExperiencePanel experiencePanel = helper.CalculateExperiencePanel();
+
+                                // If has found all Experience Panel data, returns 200
+                                return new ApiResponse(experiencePanel, 200);
+                            }
+
+                            // If hasn't found Users, returns 500
+                            return new ApiResponse("Internal server error when trying to get Users data", null, 500);
+                        }
+
+                        // If hasn't found Experiences Sets, returns 500
+                        return new ApiResponse("Internal server error when trying to get Experiences Sets data", null, 500);
                     }
+
+                    // If hasn't found Achievments, returns 500
+                    return new ApiResponse("Internal server error when trying to get reference Achievments data", null, 500);
                 }
 
-                // If has found all Experience, Metrics Values, Users and Metrics data, returns 200
-                return new ApiResponse(experiencePanel, 200);
+                // If hasn't found Metric, returns 500
+                return new ApiResponse("Internal server error when trying to get reference Metric data", null, 500);
             }
 
             // Returns not found

@@ -121,7 +121,7 @@ namespace LudocusApi.Controllers
         #endregion
 
         #region Get Experience Sets by Experience uid
-        // GET api/<ExperienceSetController>/33ba942aaca411e9b143023fad48cc33
+        // GET api/<ExperienceSetController>/experience/33ba942aaca411e9b143023fad48cc33
         [HttpGet("experience/{experience_uid}")]
         public ApiResponse GetByExperienceUid(string experience_uid)
         {
@@ -137,6 +137,43 @@ namespace LudocusApi.Controllers
                     .Match(m => m
                         .Field(f => f.experience_uid)
                         .Query(experience_uid)
+                    )
+                )
+            );
+
+            if (searchResponse.IsValid == true)
+            {
+                // If has found Experience Sets, returns 200
+                // Maps uid to the Experience Sets
+                return new ApiResponse(searchResponse.Hits.Select(h =>
+                {
+                    h.Source.uid = h.Id;
+                    return h.Source;
+                }).ToList(), 200);
+            }
+
+            // If doesn't find any, returns not found
+            return new ApiResponse(null, 204);
+        }
+        #endregion
+
+        #region Get Experiences Sets by Achievments uid list
+        // GET api/<ExperienceSetController>/achievments/["33ba942aaca411e9b143023fad48cc33"]
+        [HttpGet("achievments/{achievments_uid_list}")]
+        public ApiResponse GetByAchievmentsUidList(List<string> achievments_uid_list)
+        {
+            // Verifies if user has authorization
+            // TODO
+            // return new ApiResponse(null, 401);
+
+            // Queries Experience Sets by Experience uid
+            ISearchResponse<ExperienceSet> searchResponse = _client.Search<ExperienceSet>(s => s
+                .From(0)
+                .Size(this._defaultSize)
+                .Query(q => q
+                    .Terms(m => m
+                        .Field(f => f.achievment_uid)
+                        .Terms(achievments_uid_list)
                     )
                 )
             );

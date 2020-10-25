@@ -9,6 +9,8 @@ namespace LudocusApi.Models
     {
         public Experience experience { get; set; }
 
+        public Metric reference_metric { get; set; }
+
         public List<PanelSet> panel_sets { get; set; }
 
         public ExperiencePanel()
