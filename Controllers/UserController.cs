@@ -60,13 +60,26 @@ namespace LudocusApi.Controllers
             {
                 if (searchResponse.Hits.Count > 0)
                 {
-                    // If has found Users, returns 200
+                    // If has found Users
                     // Maps uid to the Users
-                    return new ApiResponse(searchResponse.Hits.Select(h =>
+                    List<User> user_list = searchResponse.Hits.Select(h =>
                     {
                         h.Source.uid = h.Id;
                         return h.Source;
-                    }).ToList(), 200);
+                    }).ToList();
+
+                    if (response_type == "suppressed")
+                    {
+                        // Maps List<User> to List<UserResponse>
+                        // and returns it with 200 Status Code
+                        return new ApiResponse(user_list.Select(h =>
+                        {
+                            return new UserResponse(h);
+                        }).ToList(), 200);
+                    }
+                    // Else, if response_type == "full", do nothing
+                    // and returns user_list with 200 Status Code
+                    return new ApiResponse(user_list, 200);
                 }
 
                 // If has found 0 Users, returns 204
