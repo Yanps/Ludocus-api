@@ -105,14 +105,17 @@ namespace LudocusApi.Helpers
                 // If affected Metric model is "de lançamento",
                 // then adds Achievment's value to the Metric Values' values list
                 affected_metric_values.values.Add(achievment_effect_value);
-            } else if (affected_metric.model == "a")
+            }
+            else if (affected_metric.model == "a")
             {
                 // If it's "absoluta", then the action depends on the affected Metric data type
                 if (affected_metric.data_type == "float")
                 {
                     // If affected Metric data type is "float",
                     // then instantiates new value
-                    float new_value = 0;
+                    string old_value = affected_metric_values.values.FirstOrDefault();
+                    float new_value = old_value == null ? 0 : float.Parse(old_value);
+
                     // Adds Achievment value to the Metric Values' average
                     int metric_values_values_count = affected_metric_values.values.Count();
                     if (metric_values_values_count != 0)
@@ -126,7 +129,13 @@ namespace LudocusApi.Helpers
                     }
 
                     // Sums achievment value
+                    // When the Achievment have other Operators, will implement it here
                     new_value += float.Parse(achievment_effect_value);
+
+                    // Sets the new value to the Metric Values
+                    List<string> new_value_list = new List<string>();
+                    new_value_list.Add(new_value.ToString());
+                    affected_metric_values.values = new_value_list;
                 }
                 else if (affected_metric.data_type == "string" || affected_metric.data_type == "bool")
                 {
@@ -234,6 +243,13 @@ namespace LudocusApi.Helpers
                 new List<string>(),
                 DateTime.UtcNow);
 
+            // Instantiates the inital value of reference Metric Values
+            // depending on Experience Type
+            if (this.main_experience.type == "rank")
+            {
+                reference_metric_values.values.Add("0");
+            }
+
             // Calculates User's Metric Values for reference Metric
             // using each Analyzable Experience Set
             bool hasAffectedMetric = true;
@@ -247,7 +263,7 @@ namespace LudocusApi.Helpers
                     AnalyzableExperienceSet analyzable_experience_set = this.analyzable_verification_experiences_sets_list[i];
                     // For each User and Analyzable Experience Set,
                     // searches for its Metric Values
-                    ApiResponse metricValuesApiResponse = this.metric_values_controller.GetAll(this.reference_metric.uid, user.uid);
+                    ApiResponse metricValuesApiResponse = this.metric_values_controller.GetAll(analyzable_experience_set.metric_uid, user.uid);
                     if (metricValuesApiResponse.StatusCode == 200)
                     {
                         MetricValues metric_values = ((List<MetricValues>)metricValuesApiResponse.Result).FirstOrDefault();
