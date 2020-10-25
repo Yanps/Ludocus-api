@@ -22,7 +22,7 @@ namespace LudocusApi.Controllers
         #region Get all Users
         // GET: api/<UserController>
         [HttpGet]
-        public ApiResponse GetAll([FromBody] string response_type = "suppressed")
+        public ApiResponse GetAll([FromQuery] string response_type = "suppressed")
         {
             // Verifies if user has authorization
             // TODO
