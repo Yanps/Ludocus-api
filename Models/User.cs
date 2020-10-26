@@ -53,7 +53,7 @@ namespace LudocusApi.Models
 
         public string session { get; set; }
 
-        public DateTime create_date { get; set; }
+        public DateTime? create_date { get; set; }
 
         public User() { }
 

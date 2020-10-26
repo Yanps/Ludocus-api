@@ -180,7 +180,7 @@ namespace LudocusApi.Controllers
             user.password_hash = this.GenerateHash(user.password_hash);
 
             // Creates a initial session token
-            user.session = new Guid().ToString();
+            user.session = Guid.NewGuid().ToString();
 
             // Sets User's CreateDate
             user.create_date = DateTime.UtcNow;
@@ -237,7 +237,15 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
-            // Updates User's document
+            // Deletes non editable fields
+            user.uid = null;
+            user.organization_uid = null;
+            user.create_date = null;
+            user.password_hash = null;
+            user.role = null;
+            user.session = null;
+
+            // Updates User's document's fields
             UpdateResponse<User> response = _client.Update<User, User>(
                 new DocumentPath<User>(user_uid),
                 u => u
