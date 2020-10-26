@@ -4,6 +4,7 @@ using LudocusApi.Models;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -114,7 +115,7 @@ namespace LudocusApi.Helpers
                     // If affected Metric data type is "float",
                     // then instantiates new value
                     string old_value = affected_metric_values.values.FirstOrDefault();
-                    float new_value = old_value == null ? 0 : float.Parse(old_value);
+                    float new_value = old_value == null ? 0 : float.Parse(old_value, CultureInfo.InvariantCulture);
 
                     // Adds Achievment value to the Metric Values' average
                     int metric_values_values_count = affected_metric_values.values.Count();
@@ -124,13 +125,13 @@ namespace LudocusApi.Helpers
                         // by Sum Map parsed string value
                         new_value = affected_metric_values.values.Sum(h =>
                         {
-                            return float.Parse(h);
+                            return float.Parse(h, CultureInfo.InvariantCulture);
                         }) / metric_values_values_count;
                     }
 
                     // Sums achievment value
                     // When the Achievment have other Operators, will implement it here
-                    new_value += float.Parse(achievment_effect_value);
+                    new_value += float.Parse(achievment_effect_value, CultureInfo.InvariantCulture);
 
                     // Sets the new value to the Metric Values
                     List<string> new_value_list = new List<string>();
@@ -162,10 +163,10 @@ namespace LudocusApi.Helpers
             {
                 // If Metric's is of type "Nota única", then compares the float value
                 // with rule's operator to perform the expression
-                float metric_value = analyzable_experience_set.metric_values.values.FirstOrDefault() == null ? 0 : float.Parse(analyzable_experience_set.metric_values.values.First());
+                float metric_value = analyzable_experience_set.metric_values.values.FirstOrDefault() == null ? 0 : float.Parse(analyzable_experience_set.metric_values.values.First(), CultureInfo.InvariantCulture);
 
                 // Evaluates the expression
-                evaluation = EvaluateExpression(metric_value, analyzable_experience_set.rule.operator_code, float.Parse(analyzable_experience_set.rule.rule_value));
+                evaluation = EvaluateExpression(metric_value, analyzable_experience_set.rule.operator_code, float.Parse(analyzable_experience_set.rule.rule_value, CultureInfo.InvariantCulture));
             }
             else if (analyzable_experience_set.metric.model == "l" && analyzable_experience_set.metric.data_type == "float")
             {
@@ -179,14 +180,12 @@ namespace LudocusApi.Helpers
                     // by Sum Map parsed string value
                     average_metric_value = analyzable_experience_set.metric_values.values.Sum(h =>
                     {
-                        return float.Parse(h);
+                        return float.Parse(h, CultureInfo.InvariantCulture);
                     }) / metric_values_values_count;
                 }
 
-                average_metric_value = analyzable_experience_set.metric_values.values.FirstOrDefault() == null ? 0 : float.Parse(analyzable_experience_set.metric_values.values.First());
-
                 // Evaluates the expression
-                evaluation = EvaluateExpression(average_metric_value, analyzable_experience_set.rule.operator_code, float.Parse(analyzable_experience_set.rule.rule_value));
+                evaluation = EvaluateExpression(average_metric_value, analyzable_experience_set.rule.operator_code, float.Parse(analyzable_experience_set.rule.rule_value, CultureInfo.InvariantCulture));
             }
             else if (analyzable_experience_set.metric.model == "a" && analyzable_experience_set.metric.data_type == "bool")
             {
@@ -250,6 +249,11 @@ namespace LudocusApi.Helpers
                 reference_metric_values.values.Add("0");
             }
 
+            // Clones Analyzable Verification Experiences Sets list
+            // for this user to be able to analyze and delete items from this
+            // list by User, without interfiring on other users
+            List<AnalyzableExperienceSet> user_analyzable_experiences_sets_list = new List<AnalyzableExperienceSet>(this.analyzable_verification_experiences_sets_list);
+
             // Calculates User's Metric Values for reference Metric
             // using each Analyzable Experience Set
             bool hasAffectedMetric = true;
@@ -258,9 +262,9 @@ namespace LudocusApi.Helpers
             while (hasAffectedMetric)
             {
                 hasAffectedMetric = false;
-                for (int i = this.analyzable_verification_experiences_sets_list.Count - 1; i > -1; i--)
+                for (int i = user_analyzable_experiences_sets_list.Count - 1; i > -1; i--)
                 {
-                    AnalyzableExperienceSet analyzable_experience_set = this.analyzable_verification_experiences_sets_list[i];
+                    AnalyzableExperienceSet analyzable_experience_set = user_analyzable_experiences_sets_list[i];
                     // For each User and Analyzable Experience Set,
                     // searches for its Metric Values
                     ApiResponse metricValuesApiResponse = this.metric_values_controller.GetAll(analyzable_experience_set.metric_uid, user.uid);
@@ -270,7 +274,7 @@ namespace LudocusApi.Helpers
                         analyzable_experience_set.metric_values = metric_values;
 
                         // Then, checks if logics is activated
-                        string achievment_effect_value = this.AnalyzeExperienceSetByUser(
+                        string achievment_effect_value = AnalyzeExperienceSetByUser(
                             analyzable_experience_set,
                             user
                         );
@@ -293,9 +297,9 @@ namespace LudocusApi.Helpers
                             // Further calculus and modelation would be required
                             // Probably will do later!
 
-                            // Removes Experience Set from list of verification,
+                            // Removes Experience Set from this User's list of verification,
                             // so it's not analyzed again, generating a loop
-                            this.analyzable_verification_experiences_sets_list.RemoveAt(i);
+                            user_analyzable_experiences_sets_list.RemoveAt(i);
                         }
 
                     } else
@@ -320,6 +324,14 @@ namespace LudocusApi.Helpers
             {
                 // For each User in Users list, calculate its Panel Set
                 panel_set_list.Add(CalculatePanelSetByUser(user));
+            }
+
+            // Sort list by Metric Values' value descending if is "rank" type Experience
+            if(this.main_experience.type == "rank")
+            {
+                panel_set_list.Sort((x, y) => 
+                -1*float.Parse(x.metric_values.values[0], CultureInfo.InvariantCulture)
+                .CompareTo(float.Parse(y.metric_values.values[0], CultureInfo.InvariantCulture)));
             }
             return panel_set_list;
         }
