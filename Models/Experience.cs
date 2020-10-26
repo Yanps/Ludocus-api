@@ -25,6 +25,8 @@ namespace LudocusApi.Models
 
         public string type { get; set; }
 
+        public List<string> level_ordering { get; set; }
+
         public string reference_metric_uid { get; set; }
 
         public DateTime? create_date { get; set; }
@@ -44,6 +46,7 @@ namespace LudocusApi.Models
             this.name = experience.name;
             this.description = experience.description;
             this.type = experience.type;
+            this.level_ordering = experience.level_ordering;
             this.reference_metric_uid = experience.reference_metric_uid;
             this.create_date = experience.create_date;
 

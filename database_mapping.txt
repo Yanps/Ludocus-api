@@ -883,6 +883,10 @@ PUT experiences
         "type": "keyword",
         "index": true
       },
+      "level_ordering": {
+        "type": "keyword",
+        "index": true
+      },
       "reference_metric_uid": {
         "type": "keyword",
         "index": true
