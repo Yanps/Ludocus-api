@@ -25,7 +25,7 @@ namespace LudocusApi.Models
 
         public string affected_metric_value { get; set; }
 
-        public DateTime create_date { get; set; }
+        public DateTime? create_date { get; set; }
     }
 
     public class AchievmentResponse: Achievment

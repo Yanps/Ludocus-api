@@ -27,7 +27,7 @@ namespace LudocusApi.Models
 
         public string rule_value { get; set; }
 
-        public DateTime create_date { get; set; }
+        public DateTime? create_date { get; set; }
 
         public class RuleResponse : Rule
         {

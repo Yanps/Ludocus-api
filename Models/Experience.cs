@@ -27,7 +27,7 @@ namespace LudocusApi.Models
 
         public string reference_metric_uid { get; set; }
 
-        public DateTime create_date { get; set; }
+        public DateTime? create_date { get; set; }
     }
 
     public class ExperienceResponse : Experience

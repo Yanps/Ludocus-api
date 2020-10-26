@@ -162,6 +162,11 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
+            // Sets Metric Values's uid
+            metricValues.uid = null;
+            // Creates update_date value's 
+            metricValues.update_date = DateTime.UtcNow;
+
             // Indexes Metric Values' document
             IndexResponse indexResponse = _client.IndexDocument(metricValues);
 
@@ -191,6 +196,10 @@ namespace LudocusApi.Controllers
             // Indexes Metrics Values' documents
             foreach(MetricValues metricValues in metric_values_list)
             {
+                // Sets Metric Values's uid
+                metricValues.uid = null;
+                // Creates update_date value's 
+                metricValues.update_date = DateTime.UtcNow;
                 IndexResponse indexResponse = _client.IndexDocument(metricValues);
 
                 if (indexResponse.IsValid != true)
@@ -215,6 +224,9 @@ namespace LudocusApi.Controllers
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
+
+            // Sets Metric Values's uid
+            metricValues.uid = null;
 
             // Updates update_date value's 
             metricValues.update_date = DateTime.UtcNow;

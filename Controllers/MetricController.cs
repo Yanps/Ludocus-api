@@ -143,10 +143,11 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
-            // Sets Metric's organization_uid and owner_user_uid
+            // Sets Metric's initial values
             metric.uid = null;
             metric.organization_uid = "fdefb6ee312d11e9a3ce641c67730998";
             metric.owner_user_uid = "5b48d49a8fd10a0901212430";
+            metric.group_uid = "787dc20e354611e98af5641c67730998";
 
             // Sets Metric's CreateDate
             metric.create_date = DateTime.UtcNow;
@@ -202,6 +203,13 @@ namespace LudocusApi.Controllers
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
+
+            // Deletes non editable fields
+            metric.uid = null;
+            metric.organization_uid = null;
+            metric.group_uid = null;
+            metric.create_date = null;
+            metric.owner_user_uid = null;
 
             // Updates Metric's document
             UpdateResponse<Metric> response = _client.Update<Metric, Metric>(

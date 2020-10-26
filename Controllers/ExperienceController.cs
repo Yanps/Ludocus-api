@@ -216,6 +216,12 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
+            // Sets Experience's initial values
+            experience.uid = null;
+            experience.organization_uid = "fdefb6ee312d11e9a3ce641c67730998";
+            experience.owner_user_uid = "5b48d49a8fd10a0901212430";
+            experience.create_date = DateTime.UtcNow;
+
             // Indexes Experience's document
             IndexResponse indexResponse = _client.IndexDocument(experience);
 
@@ -238,6 +244,13 @@ namespace LudocusApi.Controllers
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
+
+            // Deletes non editable fields
+            experience.uid = null;
+            experience.organization_uid = null;
+            experience.group_uid = null;
+            experience.create_date = null;
+            experience.owner_user_uid = null;
 
             // Updates Experience's document
             UpdateResponse<Experience> response = _client.Update<Experience, Experience>(

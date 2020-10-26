@@ -88,6 +88,12 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
+            // Sets Group's initial values
+            group.uid = null;
+            group.organization_uid = "fdefb6ee312d11e9a3ce641c67730998";
+            group.owner_user_uid = "5b48d49a8fd10a0901212430";
+            group.create_date = DateTime.UtcNow;
+
             // Indexes Group's document
             IndexResponse indexResponse = _client.IndexDocument(group);
 
@@ -110,6 +116,12 @@ namespace LudocusApi.Controllers
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
+
+            // Deletes non editable fields
+            group.uid = null;
+            group.organization_uid = null;
+            group.owner_user_uid = null;
+            group.create_date = null;
 
             // Updates Group's document
             UpdateResponse<Group> response = _client.Update<Group, Group>(

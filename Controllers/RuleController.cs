@@ -90,6 +90,13 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
+            // Sets Rule's organization_uid and owner_user_uid
+            rule.uid = null;
+            rule.organization_uid = "fdefb6ee312d11e9a3ce641c67730998";
+            rule.owner_user_uid = "5b48d49a8fd10a0901212430";
+            rule.group_uid = "787dc20e354611e98af5641c67730998";
+            rule.create_date = DateTime.UtcNow;
+
             // Indexes Rule's document
             IndexResponse indexResponse = _client.IndexDocument(rule);
 
@@ -112,6 +119,14 @@ namespace LudocusApi.Controllers
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
+
+            // Deletes non editable fields
+            rule.uid = null;
+            rule.organization_uid = null;
+            rule.group_uid = null;
+            rule.create_date = null;
+            rule.owner_user_uid = null;
+            rule.create_date = null;
 
             // Updates Rule's document
             UpdateResponse<Rule> response = _client.Update<Rule, Rule>(

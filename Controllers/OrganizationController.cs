@@ -93,6 +93,10 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
+            // Sets Organization's uid and Create Date
+            organization.uid = null;
+            organization.create_date = DateTime.UtcNow;
+
             // Indexes Organization's document
             IndexResponse indexResponse = _client.IndexDocument(organization);
 
@@ -116,6 +120,10 @@ namespace LudocusApi.Controllers
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
+
+            // Deletes non editable fields
+            organization.uid = null;
+            organization.create_date = null;
 
             // Updates Organization's document
             UpdateResponse<Organization> response = _client.Update<Organization, Organization>(

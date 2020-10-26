@@ -19,6 +19,6 @@ namespace LudocusApi.Models
 
         public string slug { get; set; }
 
-        public DateTime create_date { get; set; }
+        public DateTime? create_date { get; set; }
     }
 }

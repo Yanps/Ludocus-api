@@ -203,6 +203,9 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
+            // Sets Experience Set's initial values
+            experience_set.uid = null;
+
             // Indexes Experience Set's document
             IndexResponse indexResponse = _client.IndexDocument(experience_set);
 
@@ -225,6 +228,9 @@ namespace LudocusApi.Controllers
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
+
+            // Deletes non editable fields
+            experience_set.uid = null;
 
             // Updates Experience Set's document
             UpdateResponse<ExperienceSet> response = _client.Update<ExperienceSet, ExperienceSet>(

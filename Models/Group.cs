@@ -19,6 +19,6 @@ namespace LudocusApi.Models
 
         public List<string> user_uid_list { get; set; }
 
-        public DateTime create_date { get; set; }
+        public DateTime? create_date { get; set; }
     }
 }

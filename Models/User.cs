@@ -57,7 +57,7 @@ namespace LudocusApi.Models
 
         public User() { }
 
-        public User(string uid, string organization_uid, string code, string name, string surname, string email, string password_hash, string role, string session, DateTime create_date)
+        public User(string uid, string organization_uid, string code, string name, string surname, string email, string password_hash, string role, string session, DateTime? create_date)
         {
             this.uid = uid;
             this.organization_uid = organization_uid;
@@ -72,7 +72,7 @@ namespace LudocusApi.Models
             this.create_date = create_date;
         }
 
-        public User(UserResponse userResponse, string password_hash, string role, string session, DateTime create_date)
+        public User(UserResponse userResponse, string password_hash, string role, string session, DateTime? create_date)
         {
             this.uid = userResponse.uid;
             this.organization_uid = userResponse.organization_uid;

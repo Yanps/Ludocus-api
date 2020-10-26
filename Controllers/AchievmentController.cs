@@ -106,6 +106,13 @@ namespace LudocusApi.Controllers
             // TODO
             // return new ApiResponse(null, 401);
 
+            // Sets Achievment's initial values
+            achievment.uid = null;
+            achievment.organization_uid = "fdefb6ee312d11e9a3ce641c67730998";
+            achievment.owner_user_uid = "5b48d49a8fd10a0901212430";
+            achievment.group_uid = "787dc20e354611e98af5641c67730998";
+            achievment.create_date = DateTime.UtcNow;
+
             // Indexes Achievment's document
             IndexResponse indexResponse = _client.IndexDocument(achievment);
 
@@ -128,6 +135,13 @@ namespace LudocusApi.Controllers
             // Verifies if user has authorization
             // TODO
             // return new ApiResponse(null, 401);
+
+            // Deletes non editable fields
+            achievment.uid = null;
+            achievment.organization_uid = null;
+            achievment.group_uid = null;
+            achievment.create_date = null;
+            achievment.owner_user_uid = null;
 
             // Updates Achievment's document
             UpdateResponse<Achievment> response = _client.Update<Achievment, Achievment>(
