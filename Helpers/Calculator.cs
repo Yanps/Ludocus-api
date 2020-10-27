@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace LudocusApi.Helpers
@@ -19,13 +20,17 @@ namespace LudocusApi.Helpers
 
         private MetricController metric_controller { get; set; }
 
+        private MetricValuesController metric_values_controller { get; set; }
+
         private RuleController rule_controller { get; set; }
 
         private AchievmentController achievment_controller { get; set; }
 
-        private MetricValuesController metric_values_controller { get; set; }
+        private ExperienceSetController experience_set_controller { get; set; }
 
         private List<AnalyzableExperienceSet> analyzable_verification_experiences_sets_list { get; set; }
+
+        private List<MetricValues> complex_metrics_values_list { get; set; }
 
         private List<UserResponse> users_list { get; set; }
         #endregion
@@ -138,9 +143,34 @@ namespace LudocusApi.Helpers
                     new_value_list.Add(new_value.ToString());
                     affected_metric_values.values = new_value_list;
                 }
-                else if (affected_metric.data_type == "string" || affected_metric.data_type == "bool")
+                else if (affected_metric.data_type == "string")
                 {
-                    // If affected Metric data type is "string" or "bool",
+
+                    // If the main Experience is of type "level",
+                    // then the affected Metric values only changes to a higher level title,
+                    // and the order is defined on main Experience's level_ordering field
+                    if (main_experience.type != "level" ||
+                        main_experience.level_ordering
+                            .FindIndex(a => a == affected_metric_values.values[0])
+                        .CompareTo(main_experience.level_ordering.FindIndex(b => b == achievment_effect_value))
+                        < 0) 
+                    {
+                        // If achievment_effect_value index on level_ordering is bigger than
+                        // actual affected Metric values, then the title doesn't change
+
+                        // Or if affected Metric values has no values yet
+
+                        // Or if affected Metric data type is "string"
+                        // and Experience type is not "level",
+                        // then replaces actual Metric Value with Achievment's value
+                        affected_metric_values.values = new List<string>();
+                        affected_metric_values.values.Add(achievment_effect_value);
+                    }
+                    // Else, does nothing, the affected Metric values doesn't change
+                }
+                else if (affected_metric.data_type == "bool")
+                {
+                    // If affected Metric data type is "bool",
                     // then replaces actual Metric Value with Achievment's value
                     affected_metric_values.values = new List<string>();
                     affected_metric_values.values.Add(achievment_effect_value);
@@ -157,6 +187,17 @@ namespace LudocusApi.Helpers
         private string AnalyzeExperienceSetByUser(AnalyzableExperienceSet analyzable_experience_set, UserResponse user)
         {
             bool evaluation = false;
+
+            // Checks if Analyzable Experience Set's Metric is complex
+            // If it is, this Metric Values might be already calculated in complex_metrics_values_list
+            if (analyzable_experience_set.metric.classification == "c")
+            {
+                // Subtitutes the only Metric Values on complex metrics values list
+                // which has the same Metric uid and User uid as the analyzable Experience Set
+                analyzable_experience_set.metric_values = this.complex_metrics_values_list
+                    .Single(mv => mv.metric_uid == analyzable_experience_set.metric.uid &&
+                    mv.user_uid == user.uid);
+            }
 
             // Analyze Experience Set by model and data type
             if (analyzable_experience_set.metric.model == "a" && analyzable_experience_set.metric.data_type == "float")
@@ -191,10 +232,15 @@ namespace LudocusApi.Helpers
             {
                 // If Metric's is of type "Aprovação", then compares the bool value
                 // with rule's operator to perform the expression
-                bool metric_value = analyzable_experience_set.metric_values.values.FirstOrDefault() == null ? false : bool.Parse(analyzable_experience_set.metric_values.values.First());
+                // but only if the metric value is not null
+                if (analyzable_experience_set.metric_values.values.FirstOrDefault() != null)
+                {
+                    bool metric_value =  bool.Parse(analyzable_experience_set.metric_values.values.First());
+                    
+                    // Evaluates the expression
+                    evaluation = EvaluateExpression(metric_value, analyzable_experience_set.rule.operator_code, bool.Parse(analyzable_experience_set.rule.rule_value));
+                }
 
-                // Evaluates the expression
-                evaluation = EvaluateExpression(metric_value, analyzable_experience_set.rule.operator_code, bool.Parse(analyzable_experience_set.rule.rule_value));
             }
             else if (analyzable_experience_set.metric.model == "l" && analyzable_experience_set.metric.data_type == "bool")
             {
@@ -243,10 +289,14 @@ namespace LudocusApi.Helpers
                 DateTime.UtcNow);
 
             // Instantiates the inital value of reference Metric Values
-            // depending on Experience Type
-            if (this.main_experience.type == "rank")
+            // depending on reference Metric data type
+            if (this.reference_metric.data_type == "float")
             {
                 reference_metric_values.values.Add("0");
+            }
+            else if (this.reference_metric.data_type == "string")
+            {
+                reference_metric_values.values.Add("");
             }
 
             // Clones Analyzable Verification Experiences Sets list
@@ -333,6 +383,15 @@ namespace LudocusApi.Helpers
                 -1*float.Parse(x.metric_values.values[0], CultureInfo.InvariantCulture)
                 .CompareTo(float.Parse(y.metric_values.values[0], CultureInfo.InvariantCulture)));
             }
+            // Sort list by Metric Values' value descending position on main Experience
+            // level ordering array if is "level" type Experience
+            else if (this.main_experience.type == "level")
+            {
+                panel_set_list.Sort((x, y) =>
+                -1 * main_experience.level_ordering
+                            .FindIndex(a => a == x.metric_values.values[0])
+                .CompareTo(main_experience.level_ordering.FindIndex(b => b == y.metric_values.values[0])));
+            }
             return panel_set_list;
         }
         #endregion
@@ -349,10 +408,76 @@ namespace LudocusApi.Helpers
             return experience_panel;
         }
         #endregion
+
+        #region Calculate Metric Values By Complex Metric
+        // Calculates all Metric Values for all Users for a specific complex Metric
+        private List<MetricValues> CalculateMetricValuesByComplexMetric(Metric complex_metric)
+        {
+            // Instantiates Metric Values list, the method's response
+            List<MetricValues> complex_metric_values_list = new List<MetricValues>();
+
+            // Gets all necessary data to calculate it with the Calculator itself
+            // then at the end, discards the unecessary data
+
+            // First, gets All Achievments where affected Metric uid is
+            // the same as complex Metric's uid
+            ApiResponse achievmentApiResponse = this.achievment_controller.GetAll(complex_metric.uid);
+
+            if (achievmentApiResponse.StatusCode == 200)
+            {
+                // Maps achievments uid list
+                List<string> achievments_uid_list = ((List<Achievment>)achievmentApiResponse.Result).Select(h =>
+                {
+                    return h.uid;
+                }).ToList();
+
+                // If has found Achievments, searchs for Experiences Sets 
+                // where Experience Set's achievment_uid is in Achievment's list searched before
+                ApiResponse experienceSetApiResponse = this.experience_set_controller.GetByAchievmentsUidList(achievments_uid_list);
+
+                if (experienceSetApiResponse.StatusCode == 200)
+                {
+                    // If has found verification Experiences Sets,
+                    // creates verification Experiences Sets list
+                    List<ExperienceSet> verification_experiences_sets_list = (List<ExperienceSet>)experienceSetApiResponse.Result;
+
+                    // Then, instantiates the Calculator helper with every data found
+                    Calculator complex_metric_helper = new Calculator(
+                        new Experience(),
+                        complex_metric,
+                        verification_experiences_sets_list,
+                        this.users_list,
+                        this.metric_controller,
+                        this.metric_values_controller,
+                        this.rule_controller,
+                        this.achievment_controller,
+                        this.experience_set_controller);
+
+                    // Calculates reference Metric's Metric Values for each User,
+                    // and returns Experience Panel
+                    ExperiencePanel experiencePanel = complex_metric_helper.CalculateExperiencePanel();
+
+                    // Then, gets only the important data (Metric Values List)
+                    complex_metric_values_list = experiencePanel.panel_sets.Select(h =>
+                    {
+                        return h.metric_values;
+                    }).ToList();
+                }
+                else
+                {
+                    // If there's an error on any ExperienceSetApiResponse, throws error
+                    throw new System.ArgumentException("There was an error when trying to get Experiences Sets data", "original");
+                }
+            }
+
+            // Returns complex Metric Values list
+            return complex_metric_values_list;
+        }
+        #endregion
         #endregion
 
         #region Constructor
-        public Calculator(Experience main_experience, Metric reference_metric, List<ExperienceSet> verification_experiences_sets_list, List<UserResponse> users_list, MetricController metricController, MetricValuesController metricValuesController, RuleController ruleController, AchievmentController achievmentController)
+        public Calculator(Experience main_experience, Metric reference_metric, List<ExperienceSet> verification_experiences_sets_list, List<UserResponse> users_list, MetricController metricController, MetricValuesController metricValuesController, RuleController ruleController, AchievmentController achievmentController, ExperienceSetController experienceSetController)
         {
             // Sets main Experience
             this.main_experience = main_experience;
@@ -363,6 +488,13 @@ namespace LudocusApi.Helpers
             this.rule_controller = ruleController;
             this.achievment_controller = achievmentController;
             this.metric_values_controller = metricValuesController;
+            this.experience_set_controller = experienceSetController;
+            // Sets Users list
+            this.users_list = users_list;
+            // Instantiates complex Metric's uid list
+            List<string> complex_metrics_uid_list = new List<string>();
+            // Instantiates complex Metrics Values list
+            this.complex_metrics_values_list = new List<MetricValues>();
             // Calculates verification Experiences Sets list
             List<AnalyzableExperienceSet> analyzable_verification_experiences_sets_list = new List<AnalyzableExperienceSet>();
             foreach(ExperienceSet experience_set in verification_experiences_sets_list)
@@ -375,19 +507,37 @@ namespace LudocusApi.Helpers
                 {
                     // If all Gets are successfull, then creates Analyzable Experience Set
                     // and adds it to the list
+                    Metric experience_set_complex_metric = (Metric)metricApiResponse.Result;
                     analyzable_verification_experiences_sets_list.Add(
                         new AnalyzableExperienceSet(
                             experience_set,
-                            (Metric)metricApiResponse.Result,
+                            experience_set_complex_metric,
                             (Rule)ruleApiResponse.Result,
                             (Achievment)achievmentApiResponse.Result
                         )
                     );
+
+                    if (experience_set_complex_metric.classification == "c" && !complex_metrics_uid_list.Contains(experience_set_complex_metric.uid))
+                    {
+                        // If Metric is "Calculada" (complex)
+                        // and it has not been calculated, then it needs to be calculated
+                        // before the reference Metric is calculated
+                        List<MetricValues> complex_metric_values_list = CalculateMetricValuesByComplexMetric(experience_set_complex_metric);
+                        // Then, adds this calculated list
+                        // to the whole complex Metrics Values list
+                        this.complex_metrics_values_list.AddRange(complex_metric_values_list);
+
+                        // Adds the Metric's uid to the list so it's not calculated again
+                        complex_metrics_uid_list.Add(experience_set_complex_metric.uid);
+                    }
+                }
+                else
+                {
+                    // If there's an error on any ApiResponse, throws error
+                    throw new System.ArgumentException("There was an error when trying to get Metric, Rule or Achievment data", "original");
                 }
             }
             this.analyzable_verification_experiences_sets_list = analyzable_verification_experiences_sets_list;
-            // Sets Users list
-            this.users_list = users_list;
         }
         #endregion
     }

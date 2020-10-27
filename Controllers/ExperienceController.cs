@@ -176,7 +176,8 @@ namespace LudocusApi.Controllers
                                     metricController,
                                     new MetricValuesController(this._configuration),
                                     new RuleController(this._configuration),
-                                    achievmentController);
+                                    achievmentController,
+                                    new ExperienceSetController(this._configuration));
 
                                 // Calculates reference Metric's Metric Values for each User,
                                 // and returns Experience Panel
