@@ -188,17 +188,6 @@ namespace LudocusApi.Helpers
         {
             bool evaluation = false;
 
-            // Checks if Analyzable Experience Set's Metric is complex
-            // If it is, this Metric Values might be already calculated in complex_metrics_values_list
-            if (analyzable_experience_set.metric.classification == "c")
-            {
-                // Subtitutes the only Metric Values on complex metrics values list
-                // which has the same Metric uid and User uid as the analyzable Experience Set
-                analyzable_experience_set.metric_values = this.complex_metrics_values_list
-                    .Single(mv => mv.metric_uid == analyzable_experience_set.metric.uid &&
-                    mv.user_uid == user.uid);
-            }
-
             // Analyze Experience Set by model and data type
             if (analyzable_experience_set.metric.model == "a" && analyzable_experience_set.metric.data_type == "float")
             {
@@ -317,46 +306,61 @@ namespace LudocusApi.Helpers
                     AnalyzableExperienceSet analyzable_experience_set = user_analyzable_experiences_sets_list[i];
                     // For each User and Analyzable Experience Set,
                     // searches for its Metric Values
-                    ApiResponse metricValuesApiResponse = this.metric_values_controller.GetAll(analyzable_experience_set.metric_uid, user.uid);
-                    if (metricValuesApiResponse.StatusCode == 200)
+
+                    // First, checks if Analyzable Experience Set's Metric is complex
+                    // If it is, this Metric Values might be already calculated in complex_metrics_values_list
+                    if (analyzable_experience_set.metric.classification == "c")
                     {
-                        MetricValues metric_values = ((List<MetricValues>)metricValuesApiResponse.Result).FirstOrDefault();
-                        analyzable_experience_set.metric_values = metric_values;
-
-                        // Then, checks if logics is activated
-                        string achievment_effect_value = AnalyzeExperienceSetByUser(
-                            analyzable_experience_set,
-                            user
-                        );
-
-                        if (achievment_effect_value != null)
-                        {
-                            // Shows to the loop that there's an affected Metric
-                            hasAffectedMetric = true;
-
-                            // Affects the Metric Values from the affected Metric from
-                            // the Achievment in the Experience Set
-                            // with the amount of the Achievment effect value
-                            if (analyzable_experience_set.achievment.affected_metric_uid == this.reference_metric.uid)
-                            {
-                                reference_metric_values = AffectMetricValues(reference_metric_values,
-                                    this.reference_metric,
-                                    achievment_effect_value);
-                            }
-                            // ELSE TODO: Could be another Metric of "c" (Calculada) classification
-                            // Further calculus and modelation would be required
-                            // Probably will do later!
-
-                            // Removes Experience Set from this User's list of verification,
-                            // so it's not analyzed again, generating a loop
-                            user_analyzable_experiences_sets_list.RemoveAt(i);
-                        }
-
+                        // Subtitutes the only Metric Values on complex metrics values list
+                        // which has the same Metric uid and User uid as the analyzable Experience Set
+                        analyzable_experience_set.metric_values = this.complex_metrics_values_list
+                            .Single(mv => mv.metric_uid == analyzable_experience_set.metric.uid &&
+                            mv.user_uid == user.uid);
                     } else
                     {
-                        // If there's an error on metricValuesApiResponse, throws error
-                        throw new System.ArgumentException("There was an error when trying to get Metric Values data", "original");
+                        // If the Metric is not complex, searchs it's Metric Values on database
+                        ApiResponse metricValuesApiResponse = this.metric_values_controller.GetAll(analyzable_experience_set.metric_uid, user.uid);
+
+                        if (metricValuesApiResponse.StatusCode != 200)
+                        {
+                            // If there's an error on metricValuesApiResponse, throws error
+                            throw new System.ArgumentException("There was an error when trying to get Metric Values data", "original");
+                        }
+
+                        MetricValues metric_values = ((List<MetricValues>)metricValuesApiResponse.Result).FirstOrDefault();
+                        analyzable_experience_set.metric_values = metric_values;
                     }
+
+                    // Then, checks if logics is activated
+                    string achievment_effect_value = AnalyzeExperienceSetByUser(
+                        analyzable_experience_set,
+                        user
+                    );
+
+                    if (achievment_effect_value != null)
+                    {
+                        // Shows to the loop that there's an affected Metric
+                        hasAffectedMetric = true;
+
+                        // Affects the Metric Values from the affected Metric from
+                        // the Achievment in the Experience Set
+                        // with the amount of the Achievment effect value
+                        if (analyzable_experience_set.achievment.affected_metric_uid == this.reference_metric.uid)
+                        {
+                            reference_metric_values = AffectMetricValues(reference_metric_values,
+                                this.reference_metric,
+                                achievment_effect_value);
+                        }
+                        // ELSE TODO: Could be another Metric of "c" (Calculada) classification
+                        // Further calculus and modelation would be required
+                        // Probably will do later!
+
+                        // Removes Experience Set from this User's list of verification,
+                        // so it's not analyzed again, generating a loop
+                        user_analyzable_experiences_sets_list.RemoveAt(i);
+                    }
+
+                    
                 }
             }
 
